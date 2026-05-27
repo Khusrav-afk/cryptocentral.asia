@@ -1,1229 +1,181 @@
-/* ============================================================
-   VIP ПОДПИСКА 3X — Reloaded
-   Эстетика: тёмная винная (burgundy) + тёплое золото
-   ============================================================ */
+"""
+Точка запуска бота шахматного клуба для MAX.
+Запуск: python main.py
+"""
 
-:root{
-  --bg-deep:        #08050a;
-  --bg-near:        #110709;
-  --bg-elevated:    #1a0c0f;
-  --bg-card:        rgba(255, 240, 230, 0.035);
-  --bg-card-strong: rgba(255, 240, 230, 0.06);
+import logging
+import time
+import signal
+import sys
+import os
+import atexit
 
-  --line:           rgba(212, 175, 106, 0.18);
-  --line-strong:    rgba(212, 175, 106, 0.35);
-  --line-soft:      rgba(245, 235, 224, 0.08);
+from api import MaxAPI
+from handlers import handle_update
+import config
 
-  --wine:           #8a1a2a;
-  --wine-bright:    #b1202f;
-  --wine-glow:      #d12338;
-  --gold:           #d4af6a;
-  --gold-soft:      #c9a36b;
-  --gold-deep:      #8c6e3a;
+# В формате логов теперь есть PID — сразу видно, сколько процессов работает.
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s pid=%(process)d] %(name)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler("bot.log", encoding="utf-8"),
+    ]
+)
+logger = logging.getLogger(__name__)
 
-  --bronze:         #b8884f;
-  --bronze-deep:    #7a5836;
-  --bronze-glow:    #d4a05e;
+_running = True
+LOCK_FILE = "bot.lock"
+_lock_fd = None
 
-  --text:           #f3ece2;
-  --text-muted:     #a8978e;
-  --text-faint:     #6b5e57;
 
-  --display:        'Fraunces', 'Times New Roman', serif;
-  --sans:           'Manrope', system-ui, -apple-system, sans-serif;
+def _on_stop(signum, frame):
+    global _running
+    logger.info("Получен сигнал остановки — завершаю работу...")
+    _running = False
 
-  --container:      1240px;
-  --radius-sm:      8px;
-  --radius:         16px;
-  --radius-lg:      28px;
 
-  --ease-out:       cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out:    cubic-bezier(0.65, 0, 0.35, 1);
-}
+signal.signal(signal.SIGINT,  _on_stop)
+signal.signal(signal.SIGTERM, _on_stop)
 
-*,*::before,*::after{ box-sizing: border-box; }
-html{ scroll-behavior: smooth; }
 
-body{
-  margin: 0;
-  font-family: var(--sans);
-  font-weight: 400;
-  font-size: 17px;
-  line-height: 1.6;
-  color: var(--text);
-  background: var(--bg-deep);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-}
+# ── Защита от двойного запуска ───────────────────────────────────────────────
 
-/* --- Атмосферный фон со зерном и градиентами --- */
-body::before,
-body::after{
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-body::before{
-  background:
-    radial-gradient(900px 600px at 12% -5%, rgba(138, 26, 42, 0.45), transparent 60%),
-    radial-gradient(700px 700px at 95% 15%, rgba(212, 175, 106, 0.10), transparent 65%),
-    radial-gradient(800px 800px at 50% 110%, rgba(138, 26, 42, 0.25), transparent 65%);
-}
-body::after{
-  /* SVG-шум */
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.06;
-  mix-blend-mode: overlay;
-}
+def _acquire_lock() -> bool:
+    """Захватить файл-блокировку. Если уже занят — значит бот уже запущен."""
+    global _lock_fd
 
-main, header, section, footer{ position: relative; z-index: 1; }
+    # На Linux/Mac используем fcntl. На Windows — fallback на проверку PID.
+    try:
+        import fcntl
+    except ImportError:
+        return _acquire_lock_pidfile()
 
-.container{
-  width: 100%;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 24px;
-}
+    try:
+        _lock_fd = open(LOCK_FILE, "w")
+        fcntl.flock(_lock_fd.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        _lock_fd.write(str(os.getpid()))
+        _lock_fd.flush()
+        atexit.register(_release_lock)
+        return True
+    except (IOError, OSError):
+        # Файл занят другим процессом
+        try:
+            with open(LOCK_FILE) as f:
+                other_pid = f.read().strip()
+        except Exception:
+            other_pid = "?"
+        logger.error(
+            "Бот уже запущен (PID=%s). Если это не так — удалите файл %s "
+            "и запустите снова. Либо остановите старый процесс: "
+            "pkill -f 'python.*main.py'",
+            other_pid, LOCK_FILE
+        )
+        return False
 
-/* --- Типографика --- */
-h1, h2, h3, h4{
-  font-family: var(--sans);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  margin: 0;
-  color: var(--text);
-}
-em, .italic{
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 400;
-  font-variation-settings: "opsz" 144, "SOFT" 100;
-  color: var(--gold);
-  letter-spacing: -0.01em;
-}
-.eyebrow{
-  font-family: var(--sans);
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--gold);
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-}
-.eyebrow::before{
-  content: '';
-  width: 28px; height: 1px;
-  background: var(--gold);
-  opacity: 0.6;
-}
 
-/* --- Кнопки --- */
-.btn{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 18px 32px;
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-decoration: none;
-  border-radius: 999px;
-  transition: all 0.4s var(--ease-out);
-  cursor: pointer;
-  border: none;
-  position: relative;
-  overflow: hidden;
-}
-.btn-primary{
-  background: linear-gradient(135deg, var(--bronze), var(--bronze-deep));
-  color: var(--text);
-  box-shadow:
-    0 12px 30px -10px rgba(184, 136, 79, 0.55),
-    inset 0 1px 0 rgba(255,255,255,0.15);
-}
-.btn-primary:hover{
-  background: linear-gradient(135deg, var(--bronze-glow), var(--bronze));
-  transform: translateY(-2px);
-  box-shadow:
-    0 20px 40px -12px rgba(212, 160, 94, 0.65),
-    inset 0 1px 0 rgba(255,255,255,0.2);
-}
-.btn-ghost{
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--line-strong);
-}
-.btn-ghost:hover{
-  background: var(--bg-card-strong);
-  border-color: var(--gold);
-  color: var(--gold);
-}
-.btn-gold{
-  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
-  color: #1a0c0f;
-  box-shadow: 0 12px 30px -10px rgba(212, 175, 106, 0.5);
-}
-.btn-gold:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 20px 40px -12px rgba(212, 175, 106, 0.7);
-}
-.btn.disabled,
-.btn[aria-disabled='true']{
-  background: rgba(255,255,255,0.06);
-  color: var(--text-faint);
-  pointer-events: none;
-  box-shadow: none;
-}
+def _acquire_lock_pidfile() -> bool:
+    """Fallback для Windows: проверка существования процесса по PID."""
+    global _lock_fd
+    if os.path.exists(LOCK_FILE):
+        try:
+            with open(LOCK_FILE) as f:
+                old_pid = int(f.read().strip())
+            # Проверяем, существует ли процесс
+            os.kill(old_pid, 0)
+            logger.error("Бот уже запущен (PID=%s). Остановите его и попробуйте снова.",
+                         old_pid)
+            return False
+        except (OSError, ValueError):
+            # Процесса нет — можно перезаписать lock
+            pass
+    _lock_fd = open(LOCK_FILE, "w")
+    _lock_fd.write(str(os.getpid()))
+    _lock_fd.flush()
+    atexit.register(_release_lock)
+    return True
 
-/* ============================================================
-   NAV
-   ============================================================ */
-.nav{
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  z-index: 10;
-  padding: 28px 0;
-}
-.nav-row{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-.nav-brand{
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 22px;
-  color: var(--text);
-  text-decoration: none;
-  letter-spacing: -0.01em;
-}
-.nav-brand span{ color: var(--gold); }
-.nav-cta{
-  font-size: 12px;
-  padding: 12px 22px;
-}
-.nav-tag{
-  font-family: var(--sans);
-  font-weight: 600;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  padding: 8px 14px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-}
-@media (max-width: 720px){
-  .nav-tag{ display: none; }
-}
 
-/* ============================================================
-   HERO
-   ============================================================ */
-.hero{
-  min-height: 100vh;
-  height: 100vh;
-  min-height: 700px; /* safety for short laptops */
-  padding: 110px 0 40px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-}
-.hero > .container{ width: 100%; }
-.hero-grid{
-  display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  gap: 40px;
-  align-items: center;
-}
-.hero-date{
-  display: inline-flex;
-  align-items: baseline;
-  gap: 14px;
-  padding: 8px 16px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  margin-bottom: 22px;
-  background: var(--bg-card);
-  backdrop-filter: blur(8px);
-}
-.hero-date b{
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 500;
-  color: var(--gold);
-  font-size: 17px;
-}
-.hero-date span{
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-.hero-title{
-  font-size: clamp(48px, 7.2vw, 108px);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 0.94;
-  margin-bottom: 24px;
-}
-.hero-title em{
-  font-size: 0.9em;
-  display: block;
-}
-.hero-title .x{
-  display: inline-block;
-  background: linear-gradient(135deg, var(--gold) 0%, var(--wine-bright) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 600;
-  padding-right: 8px;
-}
-.hero-sub{
-  font-size: 17px;
-  color: var(--text-muted);
-  margin-bottom: 24px;
-  max-width: 520px;
-}
-.hero-sub em{ color: var(--text); font-size: 1.05em; }
+def _release_lock() -> None:
+    global _lock_fd
+    if _lock_fd:
+        try:
+            _lock_fd.close()
+        except Exception:
+            pass
+        _lock_fd = None
+    try:
+        if os.path.exists(LOCK_FILE):
+            os.remove(LOCK_FILE)
+    except Exception:
+        pass
 
-.bullets{
-  list-style: none;
-  padding: 0;
-  margin: 0 0 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.bullets li{
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  font-size: 15px;
-  color: var(--text-muted);
-}
-.bullets li b{ color: var(--text); font-weight: 600; }
-.bullet-dot{
-  flex: 0 0 18px;
-  height: 18px;
-  margin-top: 2px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--bronze), var(--bronze-deep));
-  display: grid;
-  place-items: center;
-  box-shadow: 0 4px 12px rgba(184,136,79,0.35);
-}
-.bullet-dot::after{
-  content: '';
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--text);
-}
 
-.hero-cta-row{
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-.hero-cta-row .meta{
-  font-size: 12px;
-  color: var(--text-muted);
-  line-height: 1.4;
-  max-width: 200px;
-}
-.hero-cta-row .meta b{ color: var(--gold); font-weight: 600; }
+def main() -> None:
+    if not config.BOT_TOKEN:
+        logger.error("Токен не задан! Установите BOT_TOKEN в config.py или env.")
+        return
 
-/* Hero photo — constrained by viewport height to fit on screen */
-.hero-photo{
-  position: relative;
-  aspect-ratio: 4 / 5;
-  max-height: 78vh;
-  border-radius: 0;
-  overflow: visible;
-  isolation: isolate;
-  margin-left: auto;
-}
-.hero-photo img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  display: block;
-  filter: contrast(1.05) saturate(1.05);
-  -webkit-mask-image: radial-gradient(ellipse 75% 90% at 50% 45%, #000 55%, transparent 100%);
-          mask-image: radial-gradient(ellipse 75% 90% at 50% 45%, #000 55%, transparent 100%);
-}
-.hero-photo::after{
-  content: none;
-}
-.hero-photo-col{
-  display: flex;
-  flex-direction: column;
-}
-.hero-author{
-  position: relative;
-  margin-top: -10px;
-  padding: 0 8px;
-  z-index: 2;
-}
-.hero-author .name{
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 26px;
-  color: var(--text);
-  letter-spacing: -0.01em;
-  margin-bottom: 10px;
-}
-.hero-author ul{
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.hero-author li{
-  position: relative;
-  padding-left: 14px;
-  font-size: 13px;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
-.hero-author li::before{
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 7px;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--gold);
-}
-.hero-author li + li{ margin-top: 5px; }
-.hero-author li span{ color: var(--gold); }
+    if not _acquire_lock():
+        sys.exit(1)
 
-@media (max-width: 980px){
-  .hero{
-    height: auto;
-    min-height: 0;
-    padding: 100px 0 60px;
-  }
-  .hero-grid{ grid-template-columns: 1fr; gap: 40px; }
-  .hero-photo{ max-height: none; }
-  .hero-photo-col{ max-width: 480px; margin: 0 auto; width: 100%; }
-}
+    logger.info("=" * 60)
+    logger.info("Запуск бота. PID=%s", os.getpid())
+    logger.info("=" * 60)
 
-/* ============================================================
-   SECTION HEADER
-   ============================================================ */
-.section{
-  padding: 120px 0;
-  position: relative;
-}
-.section-head{
-  max-width: 820px;
-  margin: 0 auto 64px;
-  text-align: center;
-}
-.section-title{
-  font-size: clamp(36px, 5vw, 64px);
-  margin: 18px 0 18px;
-}
-.section-sub{
-  color: var(--text-muted);
-  font-size: 18px;
-  max-width: 600px;
-  margin: 0 auto;
-}
-.section-sub em{ color: var(--gold); font-size: 1.4em; }
-@media (max-width: 720px){
-  .section{ padding: 80px 0; }
-}
+    if not config.MANAGER_CHAT_ID:
+        logger.warning(
+            "ВНИМАНИЕ: MANAGER_CHAT_ID не задан! "
+            "Заявки не будут доставляться менеджеру."
+        )
 
-/* ============================================================
-   REVIEWS AUTO-MARQUEE
-   ============================================================ */
-.reviews-marquee{
-  position: relative;
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  overflow: hidden;
-  padding: 8px 0 32px;
-  /* Fade out at edges */
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
-          mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
-}
-.reviews-track{
-  display: flex;
-  gap: 18px;
-  width: max-content;
-  animation: marquee 80s linear infinite;
-}
-.reviews-marquee:hover .reviews-track{
-  animation-play-state: paused;
-}
-@keyframes marquee{
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.review-item{
-  flex: 0 0 220px;
-  aspect-ratio: 9 / 16;
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: var(--bg-elevated);
-  border: 1px solid var(--line-soft);
-  position: relative;
-  transition: border-color 0.4s var(--ease-out);
-}
-.review-item:hover{
-  border-color: var(--line-strong);
-}
-.review-item img{
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-}
-@media (max-width: 720px){
-  .review-item{ flex-basis: 160px; }
-  .reviews-track{ animation-duration: 60s; }
-}
+    api = MaxAPI(config.BOT_TOKEN)
 
-/* ============================================================
-   SECTION: SOFTWARE (THREE STACKED BLOCKS)
-   ============================================================ */
-.software{
-  padding: 140px 0;
-  position: relative;
-}
-.software .section-head{ margin-bottom: 80px; }
+    # Проверяем подключение
+    me = None
+    for attempt in range(5):
+        me = api.get_me()
+        if me:
+            break
+        logger.warning("Попытка подключения %d/5...", attempt + 1)
+        time.sleep(3)
 
-.software-stack{
-  display: flex;
-  flex-direction: column;
-  gap: 100px;
-}
+    if not me:
+        logger.error("Не удалось подключиться к MAX Bot API.")
+        return
 
-.soft-card{
-  display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  gap: 80px;
-  align-items: center;
-  position: relative;
-}
-/* Reverse every 2nd block (text-photo instead of photo-text) */
-.soft-card:nth-child(even){
-  grid-template-columns: 1fr 1.15fr;
-}
-.soft-card:nth-child(even) .soft-photo{ order: 2; }
-.soft-card:nth-child(even) .soft-content{ order: 1; }
+    logger.info(
+        "Бот запущен: @%s (id=%s)",
+        me.get("username", "?"),
+        me.get("user_id", "?")
+    )
 
-.soft-content{
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-}
+    # Сбрасываем накопленную очередь (старые сообщения от предыдущего запуска)
+    logger.info("Сброс старых сообщений из очереди...")
+    flushed = api.flush_updates()
+    logger.info("Сброшено старых сообщений: %d. Начинаю работу.", flushed)
 
-.soft-num{
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--gold);
-  letter-spacing: 0.1em;
-}
+    logger.info("Ожидание новых сообщений... (Ctrl+C для остановки)")
 
-/* Soft photo (replaces laptop mockups) */
-.soft-photo{
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  position: relative;
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: #050307;
-  border: 1px solid var(--line-soft);
-  box-shadow:
-    0 30px 60px -20px rgba(0,0,0,0.7),
-    inset 0 1px 0 rgba(255,255,255,0.04);
-  transition: transform 0.5s var(--ease-out), border-color 0.5s var(--ease-out);
-}
-.soft-photo img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.soft-card:hover .soft-photo{
-  transform: scale(1.02);
-  border-color: var(--line);
-}
+    while _running:
+        try:
+            updates = api.get_updates()
+            for update in updates:
+                if not _running:
+                    break
+                try:
+                    handle_update(api, update)
+                except Exception as e:
+                    logger.exception("Ошибка обработки update: %s", e)
 
-.soft-title{
-  font-size: clamp(28px, 3.2vw, 42px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  margin: 0;
-}
-.soft-title em{ color: var(--gold); }
-.soft-desc{
-  color: var(--text-muted);
-  font-size: 17px;
-  line-height: 1.6;
-  margin: 0;
-  max-width: 520px;
-}
+        except Exception as e:
+            logger.exception("Критическая ошибка в основном цикле: %s", e)
+            time.sleep(5)
 
-@media (max-width: 980px){
-  .software{ padding: 80px 0; }
-  .software .section-head{ margin-bottom: 50px; }
-  .software-stack{ gap: 60px; }
-  .soft-card,
-  .soft-card:nth-child(even){
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  .soft-card:nth-child(even) .soft-photo{ order: 0; }
-  .soft-card:nth-child(even) .soft-content{ order: 0; }
-}
+    logger.info("Бот остановлен. PID=%s", os.getpid())
 
-/* ============================================================
-   SECTION: КОМУ КОМБО
-   ============================================================ */
-.who-grid{
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 60px;
-  align-items: center;
-}
-.who h2{ font-size: clamp(36px, 4.5vw, 56px); margin-bottom: 16px; }
-.who h2 em{ display: block; }
-.who .bullets li{ font-size: 17px; }
-.who-visual{
-  position: relative;
-  aspect-ratio: 1;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 30% 30%, rgba(212,175,106,0.18), transparent 60%),
-    radial-gradient(circle at 70% 70%, rgba(138,26,42,0.3), transparent 60%),
-    var(--bg-elevated);
-  border: 1px solid var(--line);
-  display: grid;
-  place-items: center;
-  padding: 40px;
-}
-.who-visual .word{
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: clamp(60px, 8.5vw, 120px);
-  font-variation-settings: "opsz" 144;
-  background: linear-gradient(135deg, var(--gold), var(--wine-bright) 80%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  letter-spacing: -0.04em;
-  line-height: 0.9;
-  text-align: center;
-  max-width: 100%;
-}
-.who-visual::after{
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    repeating-linear-gradient(45deg, rgba(212,175,106,0.04) 0 1px, transparent 1px 24px);
-  pointer-events: none;
-}
-@media (max-width: 980px){
-  .who-grid{ grid-template-columns: 1fr; gap: 40px; }
-}
 
-/* ============================================================
-   SECTION: SAVINGS
-   ============================================================ */
-.savings .section-head h2 strong{
-  color: var(--gold);
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 600;
-  font-variation-settings: "opsz" 144;
-}
-.savings-grid{
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-.save-card{
-  padding: 32px;
-  background: var(--bg-card);
-  border: 1px solid var(--line-soft);
-  border-radius: var(--radius);
-  transition: all 0.4s var(--ease-out);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.save-card:hover{
-  background: var(--bg-card-strong);
-  border-color: var(--line);
-  transform: translateY(-3px);
-}
-.save-icon{
-  width: 56px; height: 56px;
-  border-radius: var(--radius-sm);
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, var(--bronze), var(--bronze-deep));
-  box-shadow: 0 8px 20px -8px rgba(184,136,79,0.5);
-}
-.save-icon svg{ width: 28px; height: 28px; color: var(--text); }
-.save-card h3{ font-size: 22px; margin: 0; }
-.save-card p{
-  margin: 0;
-  font-size: 15px;
-  color: var(--text-muted);
-  line-height: 1.55;
-}
-.save-card .cost{
-  margin-top: auto;
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 500;
-  color: var(--gold);
-  font-size: 17px;
-}
-.save-card a{ color: var(--gold); text-decoration: underline; text-underline-offset: 4px; }
-@media (max-width: 980px){
-  .savings-grid{ grid-template-columns: 1fr; }
-}
-
-/* ============================================================
-   SECTION: PRICING
-   ============================================================ */
-.pricing-grid{
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  align-items: stretch;
-}
-.price-card{
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-  padding: 36px 30px;
-  background: var(--bg-card);
-  border: 1px solid var(--line-soft);
-  border-radius: var(--radius-lg);
-  position: relative;
-  transition: all 0.4s var(--ease-out);
-}
-.price-card.featured{
-  background:
-    linear-gradient(180deg, rgba(212,175,106,0.06), transparent),
-    var(--bg-card-strong);
-  border: 1px solid var(--line-strong);
-  transform: translateY(-8px);
-  box-shadow: 0 30px 60px -20px rgba(212,175,106,0.15);
-}
-.price-card.featured::before{
-  content: 'Лучший выбор';
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
-  color: #1a0c0f;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  padding: 7px 16px;
-  border-radius: 999px;
-  white-space: nowrap;
-}
-.price-card.sold{
-  opacity: 0.7;
-}
-.price-card.sold::after{
-  content: 'SOLD OUT';
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-family: var(--sans);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  color: var(--wine-bright);
-  border: 1px solid var(--wine-bright);
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-.price-title{
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  margin: 0;
-}
-.price-title.gold{
-  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.price-list{
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex: 1;
-}
-.price-list li{
-  position: relative;
-  padding-left: 24px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-muted);
-}
-.price-list li b{ color: var(--text); font-weight: 600; }
-.price-list li::before{
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 5px;
-  width: 14px;
-  height: 14px;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 7l3 3 5-6' stroke='%23d4af6a' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-.price-list li.gold{ color: var(--gold); font-weight: 500; }
-.price-list li.gold::before{
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 1l1.8 4.1L13 6l-3 3 0.8 4.3L7 11.3 3.2 13.3 4 9 1 6l4.2-0.9L7 1z' fill='%23d4af6a'/%3E%3C/svg%3E");
-}
-
-.price-cost{
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  margin-top: 8px;
-  padding-top: 22px;
-  border-top: 1px solid var(--line-soft);
-}
-.price-cost .old{
-  font-size: 18px;
-  color: var(--text-faint);
-  text-decoration: line-through;
-}
-.price-cost .new{
-  font-size: 44px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--gold);
-  font-family: var(--display);
-  font-style: italic;
-  font-variation-settings: "opsz" 144;
-}
-.price-cost .new sup{ font-size: 22px; vertical-align: top; margin-left: 4px; }
-.price-cost .rub{
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-left: auto;
-}
-.price-cost.sold-out .new,
-.price-cost.sold-out .old{
-  font-size: 20px;
-  color: var(--text-faint);
-  text-decoration: none;
-  font-style: normal;
-}
-.price-buy{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.price-buy .btn{ padding: 16px 22px; font-size: 13px; }
-
-@media (max-width: 980px){
-  .pricing-grid{ grid-template-columns: 1fr; gap: 18px; }
-  .price-card.featured{ transform: none; }
-}
-
-/* ============================================================
-   SECTION: PROMO (BIRTHDAY)
-   ============================================================ */
-.promo{
-  padding: 80px 0;
-}
-.promo-card{
-  position: relative;
-  padding: 64px 56px;
-  border-radius: var(--radius-lg);
-  background:
-    radial-gradient(circle at 80% 30%, rgba(212,175,106,0.18), transparent 50%),
-    radial-gradient(circle at 20% 80%, rgba(177,32,47,0.25), transparent 50%),
-    linear-gradient(135deg, var(--bg-elevated), var(--bg-near));
-  border: 1px solid var(--line-strong);
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 60px;
-  align-items: center;
-}
-.promo-card::before{
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-.promo-card::after{
-  content: '🎂';
-  position: absolute;
-  top: -20px; right: -20px;
-  font-size: 220px;
-  opacity: 0.05;
-  transform: rotate(-12deg);
-  filter: grayscale(0.4);
-}
-.promo-tag{
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 16px;
-  background: rgba(212,175,106,0.1);
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 22px;
-}
-.promo h2{
-  font-size: clamp(40px, 5vw, 64px);
-  margin-bottom: 22px;
-  letter-spacing: -0.03em;
-}
-.promo h2 em{ display: block; }
-.promo p{
-  color: var(--text-muted);
-  font-size: 17px;
-  margin: 0 0 32px;
-  max-width: 460px;
-}
-.promo-dates{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-auto-rows: max-content;
-  gap: 16px;
-  align-self: start;
-  align-items: start;
-}
-.promo-date{
-  padding: 18px 22px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 86px;
-}
-.promo-date .lbl{
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-}
-.promo-date .val{
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 28px;
-  color: var(--text);
-  line-height: 1.1;
-}
-.promo-date.is-start .val{ color: var(--gold); }
-
-.promo-price{
-  position: relative;
-  text-align: center;
-}
-.promo-price .old{
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 60px;
-  color: var(--text-faint);
-  text-decoration: line-through;
-  text-decoration-color: var(--wine-bright);
-  text-decoration-thickness: 3px;
-  display: block;
-  margin-bottom: 4px;
-}
-.promo-price .arrow{
-  font-size: 20px;
-  color: var(--gold);
-  display: block;
-  margin-bottom: 4px;
-}
-.promo-price .new{
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 600;
-  font-size: clamp(96px, 12vw, 152px);
-  background: linear-gradient(135deg, var(--gold), var(--wine-bright));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  display: block;
-  line-height: 1;
-  letter-spacing: -0.04em;
-}
-.promo-price .new sup{ font-size: 0.45em; }
-.promo-price .save{
-  display: inline-block;
-  margin-top: 16px;
-  padding: 6px 14px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  font-size: 13px;
-  color: var(--gold);
-  letter-spacing: 0.04em;
-}
-
-/* Countdown */
-.countdown{
-  margin-top: 32px;
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.cd-unit{
-  flex: 1;
-  min-width: 60px;
-  text-align: center;
-  padding: 14px 4px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-}
-.cd-unit .n{
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 600;
-  font-size: 36px;
-  color: var(--gold);
-  display: block;
-  line-height: 1;
-}
-.cd-unit .l{
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-top: 6px;
-}
-
-@media (max-width: 980px){
-  .promo-card{ grid-template-columns: 1fr; padding: 44px 28px; gap: 32px; }
-  .promo-card::after{ font-size: 140px; }
-  .promo-price{ padding: 12px 0 4px; border-top: 1px solid var(--line-soft); padding-top: 28px; }
-  .promo-price .new{ font-size: clamp(80px, 24vw, 120px); }
-  .promo-price .old{ font-size: 40px; }
-  .promo-date .lbl{ letter-spacing: 0.14em; font-size: 9.5px; }
-  .promo-date .val{ font-size: 24px; }
-}
-
-/* ============================================================
-   SECTION: GUARANTEE
-   ============================================================ */
-.guarantee{
-  padding: 100px 0;
-  text-align: center;
-}
-.guarantee-shield{
-  width: 84px; height: 84px;
-  margin: 0 auto 28px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background:
-    radial-gradient(circle, rgba(212,175,106,0.2), transparent 70%),
-    var(--bg-elevated);
-  border: 1px solid var(--line-strong);
-}
-.guarantee-shield svg{ width: 40px; height: 40px; color: var(--gold); }
-.guarantee h2{
-  font-size: clamp(28px, 3.5vw, 44px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-  max-width: 920px;
-  margin: 0 auto;
-  color: var(--text);
-}
-.guarantee h2 em{
-  color: var(--gold);
-}
-.kaspi-note{
-  margin-top: 28px;
-  display: inline-block;
-  padding: 12px 22px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--text-muted);
-  font-size: 14px;
-}
-.kaspi-note b{ color: var(--gold); }
-
-/* ============================================================
-   SECTION: START
-   ============================================================ */
-.start{
-  padding: 120px 0;
-  position: relative;
-}
-.start-grid{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-}
-.start-photo{
-  aspect-ratio: 3 / 4;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  position: relative;
-  box-shadow: 0 40px 80px -20px rgba(0,0,0,0.6);
-}
-.start-photo img{
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.start-photo::after{
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, rgba(8,5,10,0.4), transparent 50%);
-}
-.start h2{
-  font-size: clamp(40px, 5vw, 72px);
-  margin-bottom: 20px;
-}
-.start h2 em{ display: block; color: var(--gold); }
-.start p{ color: var(--text-muted); font-size: 18px; margin: 0 0 32px; max-width: 480px; }
-.start-ig{
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  padding: 18px 28px;
-  background: linear-gradient(135deg, #f09433, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888);
-  border-radius: 999px;
-  color: white;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.04em;
-  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
-  box-shadow: 0 12px 30px -10px rgba(220,39,67,0.5);
-}
-.start-ig:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 20px 40px -10px rgba(220,39,67,0.7);
-}
-.start-ig svg{ width: 22px; height: 22px; }
-.start-hint{
-  margin-top: 16px;
-  color: var(--text-faint);
-  font-size: 14px;
-}
-@media (max-width: 980px){
-  .start-grid{ grid-template-columns: 1fr; gap: 40px; }
-  .start-photo{ max-width: 420px; margin: 0 auto; }
-}
-
-/* ============================================================
-   FOOTER
-   ============================================================ */
-.footer{
-  padding: 60px 0 40px;
-  border-top: 1px solid var(--line-soft);
-  margin-top: 40px;
-}
-.footer-grid{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: start;
-}
-.footer p{
-  color: var(--text-muted);
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0;
-}
-.footer-links{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-end;
-}
-.footer-links a{
-  color: var(--text-muted);
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.3s;
-}
-.footer-links a:hover{ color: var(--gold); }
-@media (max-width: 720px){
-  .footer-grid{ grid-template-columns: 1fr; }
-  .footer-links{ align-items: flex-start; }
-}
-
-/* ============================================================
-   SCROLL REVEAL
-   ============================================================ */
-.reveal{
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
-}
-.reveal.in{
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ============================================================
-   UTILS
-   ============================================================ */
-.text-gold{ color: var(--gold); }
-.text-wine{ color: var(--wine-bright); }
-.divider{
-  width: 60px; height: 1px;
-  background: var(--gold);
-  margin: 40px auto;
-  opacity: 0.4;
-}
+if __name__ == "__main__":
+    main()
