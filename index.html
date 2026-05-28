@@ -19,6 +19,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..700,30..100;1,9..144,400..700,30..100&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/patch.css">
 </head>
 <body>
 
@@ -76,14 +77,10 @@
       </div>
     </div>
 
-    <!-- ======= HERO PHOTO — без рамок, кинематографический ======= -->
+    <!-- ======= HERO PHOTO ======= -->
     <div class="hero-photo-col reveal">
-      <!-- Обёртка фото -->
       <div class="hero-photo-wrapper">
-        <!-- Свечение позади -->
         <div class="hero-photo-glow"></div>
-
-        <!-- Основное фото -->
         <div class="hero-photo">
           <img src="img/muslim-hero.jpg" alt="Муслим Абдуллаев — основатель Cryptocentral">
           <div class="hero-photo-shine"></div>
@@ -99,7 +96,6 @@
         </div>
       </div>
 
-      <!-- Floating badge — трофей -->
       <div class="hero-float-badge hfb-trophy">
         <div class="hfb-icon">🏆</div>
         <div class="hfb-body">
@@ -108,7 +104,6 @@
         </div>
       </div>
 
-      <!-- Floating badge — участники -->
       <div class="hero-float-badge hfb-members">
         <div class="hfb-icon">👥</div>
         <div class="hfb-body">
@@ -117,7 +112,6 @@
         </div>
       </div>
 
-      <!-- Floating badge — JP Morgan -->
       <div class="hero-float-badge hfb-jp">
         <div class="hfb-icon">🏦</div>
         <div class="hfb-body">
@@ -296,7 +290,6 @@
 
     <div class="who-visual reveal">
       <div class="combo-showcase">
-
         <div class="combo-card combo-card--ai">
           <div class="combo-card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -351,7 +344,6 @@
           <span class="combo-total-val">13 260<sup>$</sup></span>
           <span class="combo-total-sub">— вы платите 890$</span>
         </div>
-
       </div>
     </div>
   </div>
@@ -485,7 +477,7 @@
   <div class="container">
     <div class="promo-card reveal">
 
-      <!-- Текстовая часть слева -->
+      <!-- Текстовая часть — ВКЛЮЧАЕТ ЦЕНУ -->
       <div class="promo-text">
         <span class="promo-tag">🎁 Акция · День рождения</span>
         <h2>Скидка <em>в честь дня рождения</em></h2>
@@ -509,12 +501,20 @@
           <div class="cd-unit"><span class="n" data-cd="secs">—</span><span class="l">секунд</span></div>
         </div>
 
-        <div style="margin-top: 32px;">
+        <!-- ЦЕНА ПЕРЕНЕСЕНА СЮДА — не мешает виду на фото -->
+        <div class="promo-price">
+          <span class="old">1000$</span>
+          <span class="arrow">↓</span>
+          <span class="new">890<sup>$</sup></span>
+          <span class="save">Экономия 110$</span>
+        </div>
+
+        <div style="margin-top: 28px;">
           <a href="#price" class="btn btn-primary">Забрать со скидкой</a>
         </div>
       </div>
 
-      <!-- Фото + цена — правая половина -->
+      <!-- Фото — чистое, без оверлеев с ценой -->
       <div class="promo-price-wrap">
         <div class="bday-photo">
           <div class="bday-photo-frame">
@@ -523,13 +523,6 @@
               <div class="bday-glow"></div>
             </div>
           </div>
-        </div>
-
-        <div class="promo-price">
-          <span class="old">1000$</span>
-          <span class="arrow">↓</span>
-          <span class="new">890<sup>$</sup></span>
-          <span class="save">Экономия 110$</span>
         </div>
       </div>
 
