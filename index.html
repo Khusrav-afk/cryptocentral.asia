@@ -19,21 +19,60 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..700,30..100;1,9..144,400..700,30..100&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/patch.css">
 </head>
 <body>
 
 <!-- ============================== NAV ============================== -->
 <nav class="nav">
-  <div class="container nav-row">
-    <a href="#" class="nav-brand">Cryptocentral<span>.</span> Muslim</a>
+  <div class="container nav-row nav-row--solo">
+    <div class="hero-date nav-date">
+      <b>07 Июня</b>
+      <span>начало потока</span>
+    </div>
     <a href="#price" class="btn btn-primary nav-cta">Выбрать тариф</a>
   </div>
 </nav>
 
 <!-- ============================== HERO ============================== -->
-<header class="hero">
-  <div class="container hero-grid">
-    <div class="hero-text reveal">
+<header class="hero hero--fullbleed">
+
+  <!-- Фото — полный экран, фоновый слой -->
+  <div class="hero-bg">
+    <img src="img/muslim-hero.png" alt="Муслим Абдуллаев">
+    <!-- Многослойный overlay: затемнение слева для текста, снизу для перехода -->
+    <div class="hero-bg-overlay"></div>
+  </div>
+
+  <!-- Floating badges — позиционируются относительно hero -->
+  <div class="hero-float-badge hfb-trophy">
+    <div class="hfb-icon">🏆</div>
+    <div class="hfb-body">
+      <strong>ТОП-3 трейдер</strong>
+      <span>Bybit 2023</span>
+    </div>
+  </div>
+
+  <div class="hero-float-badge hfb-members">
+    <div class="hfb-icon">👥</div>
+    <div class="hfb-body">
+      <strong>250+</strong>
+      <span>участников</span>
+    </div>
+  </div>
+
+  <div class="hero-float-badge hfb-jp">
+    <div class="hfb-icon">🏦</div>
+    <div class="hfb-body">
+      <strong>JP Morgan Chase</strong>
+      <span>ученик экс-президента</span>
+    </div>
+  </div>
+
+  <!-- Контент — поверх фото, прижат к левому краю -->
+  <div class="container hero-content reveal">
+
+    <div class="hero-text">
       <div class="hero-date">
         <b>07 Июня</b>
         <span>начало потока</span>
@@ -76,92 +115,20 @@
       </div>
     </div>
 
-    <!-- ======= HERO PHOTO — без рамок, кинематографический ======= -->
-    <div class="hero-photo-col reveal">
-      <!-- Обёртка фото -->
-      <div class="hero-photo-wrapper">
-        <!-- Свечение позади -->
-        <div class="hero-photo-glow"></div>
-
-        <!-- Основное фото -->
-        <div class="hero-photo">
-          <img src="img/muslim-hero.jpg" alt="Муслим Абдуллаев — основатель Cryptocentral">
-          <div class="hero-photo-shine"></div>
-
-          <div class="hero-author">
-            <div class="name">Муслим Абдуллаев</div>
-            <ul>
-              <li><span>3 место</span> как лучший трейдер 2023 за летний сезон в Bybit</li>
-              <li>Экс <span>амбассадор биржи Bybit</span></li>
-              <li>Ученик экс-президента <span>JP Morgan Chase</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Floating badge — трофей -->
-      <div class="hero-float-badge hfb-trophy">
-        <div class="hfb-icon">🏆</div>
-        <div class="hfb-body">
-          <strong>ТОП-3 трейдер</strong>
-          <span>Bybit 2023</span>
-        </div>
-      </div>
-
-      <!-- Floating badge — участники -->
-      <div class="hero-float-badge hfb-members">
-        <div class="hfb-icon">👥</div>
-        <div class="hfb-body">
-          <strong>250+</strong>
-          <span>участников</span>
-        </div>
-      </div>
-
-      <!-- Floating badge — JP Morgan -->
-      <div class="hero-float-badge hfb-jp">
-        <div class="hfb-icon">🏦</div>
-        <div class="hfb-body">
-          <strong>JP Morgan Chase</strong>
-          <span>ученик экс-президента</span>
-        </div>
-      </div>
+    <!-- Подпись автора — правый нижний угол -->
+    <div class="hero-author hero-author--corner">
+      <div class="name">Муслим Абдуллаев</div>
+      <ul>
+        <li><span>3 место</span> как лучший трейдер 2023 за летний сезон в Bybit</li>
+        <li>Экс <span>амбассадор биржи Bybit</span></li>
+        <li>Ученик экс-президента <span>JP Morgan Chase</span></li>
+      </ul>
     </div>
+
   </div>
 </header>
 
-<!-- ============================== GALLERY SLIDER ============================== -->
-<section class="gallery-slider">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">Жизнь клуба</span>
-      <h2 class="section-title">Мы не просто <em>торгуем</em></h2>
-      <p class="section-sub">Встречи, конференции, путешествия — закрытый клуб единомышленников</p>
-    </div>
-  </div>
-
-  <div class="gs-viewport reveal">
-    <div class="gs-track" id="gsTrack">
-      <!-- Загрузите фото в папку img/gallery/ с именами 1.jpg, 2.jpg... -->
-      <div class="gs-slide"><img src="img/gallery/1.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/2.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/3.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/4.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/5.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/6.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/7.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/8.jpg" alt="" loading="lazy"></div>
-    </div>
-    <button class="gs-btn gs-btn--prev" id="gsPrev" aria-label="Назад">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M14 4l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <button class="gs-btn gs-btn--next" id="gsNext" aria-label="Вперёд">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M8 4l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <div class="gs-fade gs-fade--left"></div>
-    <div class="gs-fade gs-fade--right"></div>
-  </div>
-  <div class="gs-dots" id="gsDots"></div>
-</section>
+<!-- ============================== REVIEWS</header>
 
 <!-- ============================== REVIEWS ============================== -->
 <section class="section reviews">
@@ -330,7 +297,6 @@
 
     <div class="who-visual reveal">
       <div class="combo-showcase">
-
         <div class="combo-card combo-card--ai">
           <div class="combo-card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -385,7 +351,6 @@
           <span class="combo-total-val">13 260<sup>$</sup></span>
           <span class="combo-total-sub">— вы платите 890$</span>
         </div>
-
       </div>
     </div>
   </div>
@@ -517,9 +482,10 @@
 <!-- ============================== BIRTHDAY PROMO ============================== -->
 <section class="promo">
   <div class="container">
-    <div class="promo-card reveal">
+    <canvas id="bday-canvas"></canvas>
+      <div class="promo-card reveal">
 
-      <!-- Текстовая часть слева -->
+      <!-- Текстовая часть — ВКЛЮЧАЕТ ЦЕНУ -->
       <div class="promo-text">
         <span class="promo-tag">🎁 Акция · День рождения</span>
         <h2>Скидка <em>в честь дня рождения</em></h2>
@@ -543,12 +509,20 @@
           <div class="cd-unit"><span class="n" data-cd="secs">—</span><span class="l">секунд</span></div>
         </div>
 
-        <div style="margin-top: 32px;">
+        <!-- ЦЕНА ПЕРЕНЕСЕНА СЮДА — не мешает виду на фото -->
+        <div class="promo-price">
+          <span class="old">1000$</span>
+          <span class="arrow">↓</span>
+          <span class="new">890<sup>$</sup></span>
+          <span class="save">Экономия 110$</span>
+        </div>
+
+        <div style="margin-top: 28px;">
           <a href="#price" class="btn btn-primary">Забрать со скидкой</a>
         </div>
       </div>
 
-      <!-- Фото + цена — правая половина -->
+      <!-- Фото — чистое, без оверлеев с ценой -->
       <div class="promo-price-wrap">
         <div class="bday-photo">
           <div class="bday-photo-frame">
@@ -557,13 +531,6 @@
               <div class="bday-glow"></div>
             </div>
           </div>
-        </div>
-
-        <div class="promo-price">
-          <span class="old">1000$</span>
-          <span class="arrow">↓</span>
-          <span class="new">890<sup>$</sup></span>
-          <span class="save">Экономия 110$</span>
         </div>
       </div>
 
@@ -660,69 +627,129 @@
 </script>
 
 <script>
-/* ===== GALLERY SLIDER ===== */
-(function(){
-  const track   = document.getElementById('gsTrack');
-  const dotsWrap= document.getElementById('gsDots');
-  const btnPrev = document.getElementById('gsPrev');
-  const btnNext = document.getElementById('gsNext');
-  if (!track) return;
+/* ===== BIRTHDAY PARTICLES — элегантное золотое конфетти ===== */
+(function () {
+  const canvas = document.getElementById('bday-canvas');
+  if (!canvas) return;
 
-  const slides  = Array.from(track.querySelectorAll('.gs-slide'));
-  const VISIBLE = () => window.innerWidth < 700 ? 1 : window.innerWidth < 1024 ? 2 : 3;
-  let current   = 0;
-  let autoTimer = null;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], animId;
 
-  function buildDots() {
-    dotsWrap.innerHTML = '';
-    const total = Math.max(1, slides.length - VISIBLE() + 1);
-    for (let i = 0; i < total; i++) {
-      const d = document.createElement('button');
-      d.className = 'gs-dot';
-      d.setAttribute('aria-label', 'Слайд ' + (i+1));
-      d.addEventListener('click', () => goTo(i));
-      dotsWrap.appendChild(d);
+  // Палитра — тёмное золото, бронза, бордо, кремовый
+  const PALETTE = [
+    'rgba(212,175,106,VAL)',   // gold
+    'rgba(184,136,79,VAL)',    // bronze
+    'rgba(240,219,170,VAL)',   // light gold
+    'rgba(177,32,47,VAL)',     // wine
+    'rgba(243,236,226,VAL)',   // cream
+  ];
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    W = canvas.width  = rect.width;
+    H = canvas.height = rect.height;
+  }
+
+  function randomColor(alpha) {
+    const t = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+    return t.replace('VAL', alpha.toFixed(2));
+  }
+
+  // Типы частиц: полоска, квадрат, ромб, точка, спираль-штрих
+  function Particle() {
+    this.reset(true);
+  }
+
+  Particle.prototype.reset = function (init) {
+    this.x    = Math.random() * W;
+    this.y    = init ? Math.random() * H * 1.2 - H * 0.2 : -20;
+    this.size = Math.random() * 5 + 2;          // 2–7px
+    this.len  = Math.random() * 14 + 4;         // длина полоски
+    this.type = Math.floor(Math.random() * 4);  // 0=полоска,1=квадрат,2=ромб,3=точка
+    this.vx   = (Math.random() - 0.5) * 0.6;   // лёгкий дрейф
+    this.vy   = Math.random() * 0.8 + 0.35;     // падение 0.35–1.15
+    this.rot  = Math.random() * Math.PI * 2;
+    this.drot = (Math.random() - 0.5) * 0.03;  // медленное вращение
+    this.alpha = Math.random() * 0.45 + 0.25;  // 0.25–0.70 — не слишком ярко
+    this.color = randomColor(this.alpha);
+    this.sway  = Math.random() * 0.015 + 0.005;
+    this.swayT = Math.random() * Math.PI * 2;
+  };
+
+  Particle.prototype.update = function (t) {
+    this.swayT += this.sway;
+    this.x  += this.vx + Math.sin(this.swayT) * 0.4;
+    this.y  += this.vy;
+    this.rot += this.drot;
+    if (this.y > H + 20) this.reset(false);
+  };
+
+  Particle.prototype.draw = function () {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rot);
+    ctx.fillStyle = this.color;
+    ctx.strokeStyle = this.color;
+
+    if (this.type === 0) {
+      // тонкая полоска
+      ctx.beginPath();
+      ctx.roundRect(-this.len / 2, -this.size / 4, this.len, this.size / 2, 1);
+      ctx.fill();
+    } else if (this.type === 1) {
+      // маленький квадрат
+      const s = this.size;
+      ctx.fillRect(-s / 2, -s / 2, s, s);
+    } else if (this.type === 2) {
+      // ромб
+      const s = this.size * 0.85;
+      ctx.beginPath();
+      ctx.moveTo(0, -s); ctx.lineTo(s * 0.55, 0);
+      ctx.lineTo(0, s);  ctx.lineTo(-s * 0.55, 0);
+      ctx.closePath(); ctx.fill();
+    } else {
+      // точка / звёздочка-блик
+      ctx.beginPath();
+      ctx.arc(0, 0, this.size * 0.55, 0, Math.PI * 2);
+      ctx.fill();
     }
+    ctx.restore();
+  };
+
+  function spawn() {
+    // ~55 частиц — заметно, но не кричит
+    const COUNT = Math.floor(W / 22);
+    particles = Array.from({ length: COUNT }, () => new Particle());
   }
 
-  function updateDots() {
-    dotsWrap.querySelectorAll('.gs-dot').forEach((d,i) => d.classList.toggle('active', i === current));
+  let last = 0;
+  function loop(ts) {
+    animId = requestAnimationFrame(loop);
+    const dt = ts - last; last = ts;
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(ts); p.draw(); });
   }
 
-  function goTo(idx) {
-    const max = Math.max(0, slides.length - VISIBLE());
-    current = Math.max(0, Math.min(idx, max));
-    const slideW = slides[0].offsetWidth + 20;
-    track.style.transform = 'translateX(-' + (current * slideW) + 'px)';
-    updateDots();
-  }
+  // Запуск только когда секция видна (IntersectionObserver)
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        resize(); spawn(); last = performance.now(); loop(last);
+      } else {
+        if (animId) { cancelAnimationFrame(animId); animId = null; }
+      }
+    });
+  }, { threshold: 0.1 });
 
-  function next() { goTo(current + 1); }
-  function prev() { goTo(current - 1); }
+  observer.observe(canvas.parentElement);
 
-  function startAuto() {
-    stopAuto();
-    autoTimer = setInterval(function() {
-      const max = Math.max(0, slides.length - VISIBLE());
-      goTo(current >= max ? 0 : current + 1);
-    }, 4000);
-  }
-  function stopAuto() { clearInterval(autoTimer); }
-
-  btnNext.addEventListener('click', function() { next(); startAuto(); });
-  btnPrev.addEventListener('click', function() { prev(); startAuto(); });
-
-  let touchX = 0;
-  track.addEventListener('touchstart', function(e) { touchX = e.touches[0].clientX; stopAuto(); }, {passive:true});
-  track.addEventListener('touchend',   function(e) {
-    const dx = e.changedTouches[0].clientX - touchX;
-    if (Math.abs(dx) > 40) { if (dx < 0) next(); else prev(); }
-    startAuto();
+  window.addEventListener('resize', () => {
+    resize();
+    particles.forEach(p => p.reset(true));
   });
-
-  buildDots(); goTo(0); startAuto();
-  window.addEventListener('resize', function() { buildDots(); goTo(0); });
 })();
 </script>
+
 </body>
 </html>
