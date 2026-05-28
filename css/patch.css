@@ -663,3 +663,120 @@
 .hero-author--corner {
   padding-bottom: 20px;
 }
+
+
+/* ============================================================
+   HERO LAYOUT FIX — исправляем «плавающие» элементы
+   ============================================================ */
+
+/* --- Сетка контента: текст строго в левых 52%, автор справа --- */
+.hero-content {
+  grid-template-columns: 52% 1fr;
+  align-items: flex-end;
+  padding-bottom: 88px;
+  padding-top: 140px;
+}
+
+/* --- Фиксим все floating badges ---
+     Они absolute внутри .hero--fullbleed,
+     убираем старые left/right из main.css и ставим новые */
+
+/* Сбрасываем все позиции из main.css */
+.hero--fullbleed .hero-float-badge {
+  position: absolute;
+}
+
+/* ТОП-3 трейдер — правый верхний, над человеком */
+.hero--fullbleed .hfb-trophy {
+  top: 18%;
+  right: 5%;
+  left: auto;
+  bottom: auto;
+  animation-delay: 0s;
+}
+
+/* 250+ участников — правый, середина */
+.hero--fullbleed .hfb-members {
+  top: auto;
+  bottom: 22%;
+  right: 4%;
+  left: auto;
+  animation-delay: 1.5s;
+}
+
+/* JP Morgan — убираем из hero полностью,
+   он маленький и теряется; вместо него показываем в тексте
+   (или можно разместить снизу-слева) */
+.hero--fullbleed .hfb-jp {
+  display: none;
+}
+
+/* Переопределяем overlay — текстовая зона чётче затемнена */
+.hero-bg-overlay {
+  background:
+    /* Левые 55% — плотное затемнение под текст */
+    linear-gradient(
+      100deg,
+      rgba(8,5,10,0.90) 0%,
+      rgba(8,5,10,0.82) 25%,
+      rgba(8,5,10,0.55) 45%,
+      rgba(8,5,10,0.15) 60%,
+      transparent 72%
+    ),
+    /* Снизу → seamless переход в фон */
+    linear-gradient(
+      0deg,
+      rgba(8,5,10,1)    0%,
+      rgba(8,5,10,0.75) 9%,
+      rgba(8,5,10,0.25) 26%,
+      transparent       45%
+    ),
+    /* Сверху — под навигацию */
+    linear-gradient(
+      180deg,
+      rgba(8,5,10,0.5) 0%,
+      transparent       15%
+    ),
+    /* Правая виньетка */
+    linear-gradient(
+      270deg,
+      rgba(8,5,10,0.5) 0%,
+      rgba(8,5,10,0.15) 15%,
+      transparent 35%
+    ),
+    /* Тёплый amber акцент — тон стены фото */
+    radial-gradient(
+      ellipse 38% 50% at 1% 44%,
+      rgba(150,70,15,0.2),
+      transparent 68%
+    );
+}
+
+/* Текстовый блок — не даём растягиваться шире левой зоны */
+.hero--fullbleed .hero-text {
+  max-width: 560px;
+  width: 100%;
+}
+
+/* Автор — чище, без лишних отступов */
+.hero-author--corner {
+  padding-bottom: 20px;
+  padding-left: 20px;
+}
+
+/* --- Мобильный фикс --- */
+@media (max-width: 980px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    padding-top: 120px;
+    padding-bottom: 60px;
+  }
+  .hero--fullbleed .hfb-trophy {
+    top: 12%;
+    right: 3%;
+  }
+  .hero--fullbleed .hfb-members {
+    bottom: 18%;
+    right: 3%;
+  }
+}
