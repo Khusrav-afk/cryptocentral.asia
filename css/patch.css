@@ -1,426 +1,13 @@
 /* ============================================================
-   PATCH v2 — три правки:
-   1. Promo: цена вынесена из тела фото
-   2. Devices: более реалистичные мокапы
-   3. Hero photo: бесшовное слияние с фоном
+   PATCH v3 — три правки hero:
+   1. Текст сдвинут к центру, не прижат к левому краю
+   2. JP Morgan badge — справа от тела, по стрелке
+   3. Фото чуть меньше — больше воздуха над головой
    ============================================================ */
 
 /* ============================================================
-   FIX 3 — HERO PHOTO: бесшовное слияние с фоном сайта
-   Убираем рамку, border-radius и делаем mask-image fade
+   BASE — hero fullbleed layout
    ============================================================ */
-.hero-photo {
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  border: none !important;
-  overflow: visible !important;
-  /* Маска: фото плавно растворяется по всем краям в фон */
-  -webkit-mask-image:
-    radial-gradient(
-      ellipse 88% 82% at 54% 42%,
-      black 38%,
-      rgba(0,0,0,0.85) 52%,
-      rgba(0,0,0,0.4) 68%,
-      transparent 88%
-    );
-  mask-image:
-    radial-gradient(
-      ellipse 88% 82% at 54% 42%,
-      black 38%,
-      rgba(0,0,0,0.85) 52%,
-      rgba(0,0,0,0.4) 68%,
-      transparent 88%
-    );
-  isolation: isolate;
-}
-
-.hero-photo img {
-  filter: contrast(1.08) saturate(1.12) brightness(0.96);
-}
-
-/* Убираем внешнюю рамку-тень у обёртки */
-.hero-photo-wrapper {
-  overflow: visible !important;
-}
-
-/* Усиливаем glow снизу — теперь он «сшивает» фото с фоном */
-.hero-photo-glow {
-  bottom: -40px;
-  left: -20%;
-  right: -20%;
-  height: 380px;
-  background: radial-gradient(
-    ellipse 80% 70% at 50% 100%,
-    rgba(138, 26, 42, 0.65),
-    rgba(8,5,10,0) 72%
-  );
-  filter: blur(60px);
-}
-
-/* Тёплый золотистый ambient слева — усиливаем */
-.hero-photo-wrapper::before {
-  left: -50px;
-  width: 180px;
-  height: 80%;
-  background: radial-gradient(
-    ellipse at left,
-    rgba(212,175,106,0.22),
-    transparent 75%
-  );
-  filter: blur(40px);
-}
-
-/* ============================================================
-   FIX 1 — PROMO: цена вынесена из фото, photo остаётся чистым
-   ============================================================ */
-
-/* Перестраиваем promo-card: левая колонка шире */
-.promo-card {
-  grid-template-columns: 1.1fr 0.9fr;
-  align-items: stretch;
-}
-
-/* Цена теперь В левой колонке (promo-text), не в promo-price-wrap */
-.promo-price {
-  position: static !important;
-  z-index: auto !important;
-  text-align: left !important;
-  padding: 0 !important;
-  width: auto !important;
-  margin-top: 28px;
-  display: flex;
-  align-items: baseline;
-  gap: 18px;
-  flex-wrap: wrap;
-}
-
-.promo-price .old {
-  font-size: 20px !important;
-  display: inline !important;
-  margin-bottom: 0 !important;
-}
-
-.promo-price .arrow {
-  display: inline !important;
-  font-size: 20px !important;
-  margin-bottom: 0 !important;
-  color: var(--gold-soft);
-}
-
-.promo-price .new {
-  font-size: clamp(48px, 6vw, 80px) !important;
-  line-height: 0.9 !important;
-  filter: none !important;
-}
-
-.promo-price .save {
-  display: inline-flex !important;
-  margin-top: 0 !important;
-  align-self: flex-end;
-  margin-bottom: 8px;
-}
-
-/* Правая половина (фото) — полностью чистая, без ценника */
-.promo-price-wrap {
-  min-height: 480px;
-  display: block;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Фото в правой колонке — атмосферный fade слева */
-.bday-photo-overlay {
-  background:
-    linear-gradient(90deg, rgba(8,5,10,0.7) 0%, rgba(8,5,10,0.15) 40%, rgba(8,5,10,0.05) 75%, transparent 100%),
-    linear-gradient(0deg, rgba(8,5,10,0.35) 0%, transparent 50%);
-}
-
-/* ============================================================
-   FIX 2 — DEVICE MOCKUPS: фотореалистичные экраны
-   ============================================================ */
-
-/* ---- MacBook: усиленные детали ---- */
-.device--macbook {
-  filter:
-    drop-shadow(0 1px 1px rgba(0,0,0,0.55))
-    drop-shadow(0 8px 16px rgba(0,0,0,0.65))
-    drop-shadow(0 30px 60px rgba(0,0,0,0.55))
-    drop-shadow(0 60px 100px rgba(0,0,0,0.3));
-}
-
-.device--macbook .device-top-bar {
-  height: 34px;
-  background: linear-gradient(180deg,
-    #5a5a68 0%,
-    #484852 20%,
-    #3c3c48 50%,
-    #323240 75%,
-    #2a2a38 100%
-  );
-  border-radius: 12px 12px 0 0;
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.22),
-    inset 0 -1px 0 rgba(0,0,0,0.4),
-    inset 1px 0 0 rgba(255,255,255,0.06),
-    inset -1px 0 0 rgba(255,255,255,0.06);
-}
-
-/* Нотч с подсветкой под камерой */
-.device--macbook .device-camera {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #2e2e34, #08080c);
-  box-shadow:
-    0 0 0 1.5px rgba(0,0,0,0.9),
-    0 0 0 3px rgba(255,255,255,0.03),
-    inset 0 1px 2px rgba(80,200,255,0.2),
-    0 0 8px rgba(80,200,255,0.08);
-}
-
-.device--macbook .device-screen {
-  border-left: 18px solid #2a2a38;
-  border-right: 18px solid #2a2a38;
-  border-bottom: 14px solid #2a2a38;
-  background: #070710;
-  /* Внутренняя тень экрана: ощущение глубины */
-  box-shadow:
-    inset 0 0 0 1px rgba(0,0,0,0.9),
-    inset 0 2px 12px rgba(0,0,0,0.7),
-    inset 0 0 40px rgba(0,0,0,0.5);
-}
-
-/* Многослойный блик на стекле экрана */
-.device--macbook .device-screen::before {
-  background:
-    /* диагональный блик линзы */
-    linear-gradient(
-      130deg,
-      rgba(255,255,255,0.07) 0%,
-      rgba(255,255,255,0.03) 18%,
-      transparent 35%
-    ),
-    /* тонкий блик по верхнему краю экрана */
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.05) 0%,
-      transparent 4%
-    );
-}
-
-.device--macbook .device-hinge {
-  height: 12px;
-  background: linear-gradient(180deg, #282836 0%, #1e1e2a 50%, #161620 100%);
-  border-left: 18px solid #2a2a38;
-  border-right: 18px solid #2a2a38;
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.06),
-    inset 0 -2px 4px rgba(0,0,0,0.5);
-}
-
-.device--macbook .device-foot {
-  width: 48%;
-  height: 14px;
-  background: linear-gradient(180deg,
-    #2c2c3c 0%,
-    #242432 40%,
-    #1a1a26 80%,
-    #141420 100%
-  );
-  border-radius: 0 0 12px 12px;
-  box-shadow:
-    0 8px 24px rgba(0,0,0,0.7),
-    0 2px 4px rgba(0,0,0,0.5),
-    inset 0 -2px 0 rgba(0,0,0,0.5);
-}
-
-/* Блик по передней грани основания */
-.device--macbook .device-foot::before {
-  left: 12%; right: 12%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255,255,255,0.14),
-    transparent
-  );
-}
-
-/* Прорезиновые ножки — чуть заметнее */
-.device--macbook .device-foot::after {
-  bottom: 3px;
-  left: 10%; right: 10%;
-  height: 3px;
-  border-radius: 2px;
-  background: rgba(0,0,0,0.65);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
-}
-
-/* Hover — эффект 3D подъёма */
-.soft-card:hover .device--macbook {
-  transform: translateY(-10px) perspective(1200px) rotateX(2deg) rotateY(-1deg);
-}
-
-/* ---- Тёмный MacBook ---- */
-.device--dark .device-top-bar {
-  background: linear-gradient(180deg, #222230 0%, #18181e 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    inset 0 -1px 0 rgba(0,0,0,0.5);
-}
-.device--dark .device-screen {
-  border-color: #14141c;
-  background: #04040a;
-}
-.device--dark .device-hinge {
-  background: linear-gradient(180deg, #161620, #0e0e16);
-  border-color: #14141c;
-}
-.device--dark .device-foot {
-  background: linear-gradient(180deg, #1a1a22, #0e0e14);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-}
-
-/* ---- Monitor: фотореалистичная панель ---- */
-.device--monitor {
-  filter:
-    drop-shadow(0 2px 2px rgba(0,0,0,0.6))
-    drop-shadow(0 12px 24px rgba(0,0,0,0.7))
-    drop-shadow(0 40px 80px rgba(0,0,0,0.5))
-    drop-shadow(0 80px 120px rgba(0,0,0,0.3));
-}
-
-.device--monitor .device-screen {
-  border: 16px solid #181824;
-  border-bottom-width: 36px;
-  border-radius: 12px 12px 6px 6px;
-  background: #06060e;
-  box-shadow:
-    /* внешняя рамка — металл */
-    0 0 0 1px rgba(255,255,255,0.07),
-    0 0 0 2px rgba(0,0,0,0.8),
-    /* внутреннее свечение экрана */
-    inset 0 0 0 1px rgba(0,0,0,0.9),
-    inset 0 2px 16px rgba(0,0,0,0.8);
-}
-
-/* Логотип/статус-светодиод */
-.device--monitor .device-screen::before {
-  bottom: -27px;
-  width: 6px;
-  height: 6px;
-  background: radial-gradient(circle at 40% 40%, #3ddb8a, #1a9e5a);
-  box-shadow:
-    0 0 4px rgba(26,158,90,0.9),
-    0 0 12px rgba(26,158,90,0.4);
-}
-
-/* Стекло на мониторе */
-.device--monitor .device-screen::after {
-  background:
-    linear-gradient(
-      140deg,
-      rgba(255,255,255,0.055) 0%,
-      rgba(255,255,255,0.02) 22%,
-      transparent 40%
-    );
-}
-
-.device--monitor .device-monitor-neck {
-  width: 16px;
-  height: 38px;
-  background: linear-gradient(
-    180deg,
-    #1c1c28 0%,
-    #161620 50%,
-    #121218 100%
-  );
-  box-shadow:
-    -2px 0 0 rgba(255,255,255,0.04),
-    2px 0 0 rgba(0,0,0,0.5);
-}
-
-.device--monitor .device-monitor-base {
-  width: 44%;
-  height: 14px;
-  background: linear-gradient(
-    180deg,
-    #1e1e2c 0%,
-    #161620 50%,
-    #0e0e14 100%
-  );
-  border-radius: 3px 3px 10px 10px;
-  box-shadow:
-    0 6px 16px rgba(0,0,0,0.65),
-    inset 0 1px 0 rgba(255,255,255,0.06),
-    inset 0 -1px 0 rgba(0,0,0,0.5);
-  position: relative;
-}
-/* Блик на основании монитора */
-.device--monitor .device-monitor-base::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 10%; right: 10%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255,255,255,0.1),
-    transparent
-  );
-}
-
-/* Hover монитора */
-.soft-card:hover .device--monitor {
-  transform: translateY(-10px) perspective(1400px) rotateX(1.5deg);
-}
-
-/* Экран светится — ambient glow за устройством */
-.soft-photo-wrap::after {
-  content: '';
-  position: absolute;
-  bottom: -20px;
-  left: 10%;
-  right: 10%;
-  height: 80px;
-  background: radial-gradient(
-    ellipse 70% 40% at 50% 100%,
-    rgba(80,120,200,0.18),
-    transparent 70%
-  );
-  filter: blur(20px);
-  pointer-events: none;
-  z-index: -1;
-}
-
-
-/* ============================================================
-   BIRTHDAY PARTICLES — элегантный эффект конфетти
-   ============================================================ */
-.promo {
-  position: relative;
-}
-#bday-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 3;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-
-/* ============================================================
-   HERO v3 — FULL-BLEED CINEMATIC
-   Фото на весь экран, текст поверх с gradient overlay
-   ============================================================ */
-
-/* Nav: убрали brand — CTA выравниваем вправо */
-.nav-row--solo {
-  justify-content: flex-end;
-}
-
-/* Hero — полноэкранный контейнер */
 .hero--fullbleed {
   position: relative;
   min-height: 100vh;
@@ -430,7 +17,6 @@
   align-items: flex-end;
 }
 
-/* Отменяем старый grid-layout */
 .hero--fullbleed .hero-grid,
 .hero--fullbleed .hero-photo-col,
 .hero--fullbleed .hero-photo-wrapper,
@@ -438,7 +24,7 @@
   display: none !important;
 }
 
-/* Фоновое фото — на весь блок */
+/* Фоновое фото */
 .hero-bg {
   position: absolute;
   inset: 0;
@@ -448,88 +34,129 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 18%;
   display: block;
-  filter: contrast(1.06) saturate(1.1) brightness(0.88);
+  filter: contrast(1.04) saturate(1.06) brightness(0.92);
 }
 
-/* Многослойный overlay:
-   — слева: глубокий тёмный градиент для читаемости текста
-   — снизу: мягкий fade в цвет фона сайта (seamless переход)
-   — справа: лёгкое виньетирование
-*/
+/* ============================================================
+   FIX 3 — Фото чуть меньше: сдвигаем человека вниз
+   Больше пространства над головой → кнопка не упирается
+   ============================================================ */
+.hero-bg img {
+  /* Сдвигаем человека ниже в кадре — голова отходит от кнопки */
+  object-position: 60% 35%;
+}
+
+/* ============================================================
+   OVERLAY — многослойный, текстовая зона слева затемнена
+   ============================================================ */
 .hero-bg-overlay {
   position: absolute;
   inset: 0;
   background:
-    /* Левая половина — основной overlay для текста */
+    /* Левая зона — плотное затемнение под текст */
     linear-gradient(
-      105deg,
-      rgba(8,5,10,0.92) 0%,
-      rgba(8,5,10,0.78) 28%,
-      rgba(8,5,10,0.45) 52%,
-      rgba(8,5,10,0.12) 72%,
-      transparent 88%
+      100deg,
+      rgba(8,5,10,0.93) 0%,
+      rgba(8,5,10,0.82) 22%,
+      rgba(8,5,10,0.48) 44%,
+      rgba(8,5,10,0.10) 60%,
+      transparent 72%
     ),
-    /* Снизу — плавный переход в фон сайта */
+    /* Снизу — seamless переход в фон */
     linear-gradient(
       0deg,
       rgba(8,5,10,1)    0%,
-      rgba(8,5,10,0.65) 12%,
-      transparent       35%
+      rgba(8,5,10,0.75) 9%,
+      rgba(8,5,10,0.22) 26%,
+      transparent       44%
     ),
-    /* Сверху — лёгкое затемнение для навигации */
+    /* Сверху — под навигацию */
     linear-gradient(
       180deg,
       rgba(8,5,10,0.55) 0%,
-      transparent       18%
+      transparent 16%
     ),
     /* Правая виньетка */
-    radial-gradient(
-      ellipse 60% 100% at 100% 50%,
-      rgba(8,5,10,0.3),
-      transparent 70%
+    linear-gradient(
+      270deg,
+      rgba(8,5,10,0.55) 0%,
+      rgba(8,5,10,0.18) 14%,
+      transparent 32%
     ),
-    /* Тёплое винное свечение снизу-слева — brand color */
+    /* Тёплый amber акцент слева */
     radial-gradient(
-      ellipse 50% 35% at 15% 100%,
-      rgba(138,26,42,0.5),
-      transparent 65%
+      ellipse 36% 50% at 0% 44%,
+      rgba(150,70,15,0.18),
+      transparent 68%
     );
 }
 
-/* Контент поверх — flex, текст слева, автор справа-снизу */
+/* ============================================================
+   FIX 1 — Текст к центру, не прижат к краю
+   Контейнер: отступ слева 8–12% от ширины экрана
+   ============================================================ */
 .hero-content {
   position: relative;
   z-index: 2;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* Текст занимает ~50% от центра, правее чем раньше */
+  grid-template-columns: 50% 1fr;
   align-items: flex-end;
-  padding-bottom: 80px;
-  padding-top: 160px;
+  padding-top: 120px;
+  padding-bottom: 100px;
   gap: 40px;
+  /* Сдвигаем весь контейнер правее — ближе к середине экрана */
+  padding-left: 10%;
+  padding-right: 3%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-/* Текстовый блок — левая колонка */
+/* Текстовый блок: выравнивание чуть улучшено */
 .hero--fullbleed .hero-text {
-  max-width: 600px;
+  max-width: 520px;
+  width: 100%;
 }
 
-/* Подпись автора — правый нижний угол */
+/* Дата — чуть меньше отступ снизу */
+.hero--fullbleed .hero-text .hero-date {
+  margin-bottom: 24px;
+}
+
+/* Заголовок — tight, без лишних отступов */
+.hero--fullbleed .hero-title {
+  margin-bottom: 20px;
+}
+
+/* Подзаголовок ближе к заголовку */
+.hero--fullbleed .hero-sub {
+  margin-bottom: 28px;
+}
+
+/* Буллеты — чуть компактнее */
+.hero--fullbleed .bullets {
+  margin-bottom: 36px;
+}
+
+/* ============================================================
+   АВТОР — правый нижний угол
+   ============================================================ */
 .hero-author--corner {
   text-align: right;
   align-self: flex-end;
-  padding-bottom: 4px;
+  padding-bottom: 28px;
+  padding-left: 20px;
 }
 .hero-author--corner .name {
   font-family: var(--display);
   font-style: italic;
   font-weight: 400;
-  font-size: 26px;
-  color: rgba(243,236,226,0.8);
+  font-size: 22px;
+  color: rgba(243,236,226,0.75);
   letter-spacing: -0.01em;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 .hero-author--corner ul {
   list-style: none;
@@ -538,12 +165,12 @@
 .hero-author--corner li {
   position: relative;
   padding-right: 14px;
-  font-size: 13px;
-  color: rgba(243,236,226,0.5);
+  font-size: 12px;
+  color: rgba(243,236,226,0.45);
   line-height: 1.5;
 }
-.hero-author--corner li + li { margin-top: 7px; }
-.hero-author--corner li span { color: rgba(212,175,106,0.8); }
+.hero-author--corner li + li { margin-top: 6px; }
+.hero-author--corner li span { color: rgba(212,175,106,0.75); }
 .hero-author--corner li::before {
   content: '';
   position: absolute;
@@ -553,10 +180,47 @@
   background: rgba(212,175,106,0.4);
 }
 
-/* Floating badges — теперь относительно hero, не photo-col */
-.hero--fullbleed .hfb-trophy  { top: 22%;  right: 6%; }
-.hero--fullbleed .hfb-members { bottom: 28%; right: 3%; }
-.hero--fullbleed .hfb-jp      { top: 42%;  right: 28%; }
+/* ============================================================
+   FIX 2 — Бейджи
+   JP Morgan — справа от тела (по стрелке на скриншоте)
+   ТОП-3 — правый верх, над плечом
+   250+ — правый низ
+   ============================================================ */
+.hero--fullbleed .hero-float-badge {
+  position: absolute;
+  z-index: 5;
+  min-width: 155px;
+}
+
+/* ТОП-3 трейдер — правый верх, над плечом */
+.hero--fullbleed .hfb-trophy {
+  top: auto;
+  bottom: 52%;
+  right: 3%;
+  left: auto;
+  animation-delay: 0s;
+}
+
+/* JP Morgan Chase — СПРАВА ОТ ТЕЛА, середина по высоте
+   Стрелка на скриншоте указывает примерно на уровень локтя/пояса */
+.hero--fullbleed .hfb-jp {
+  display: flex;
+  top: auto;
+  bottom: 34%;
+  right: 3%;
+  left: auto;
+  animation-delay: 1.2s;
+}
+
+/* 250+ участников — правый низ */
+.hero--fullbleed .hfb-members {
+  top: auto;
+  bottom: 16%;
+  right: 3%;
+  left: auto;
+  display: flex;
+  animation-delay: 2.2s;
+}
 
 /* Плавный переход hero → следующая секция */
 .hero--fullbleed::after {
@@ -564,430 +228,129 @@
   position: absolute;
   bottom: -2px;
   left: 0; right: 0;
-  height: 120px;
+  height: 140px;
   background: linear-gradient(0deg, var(--bg-deep) 0%, transparent 100%);
   z-index: 3;
   pointer-events: none;
 }
 
-/* ---- Mobile ---- */
-@media (max-width: 980px) {
-  .hero-content {
-    grid-template-columns: 1fr;
-    padding-bottom: 60px;
-    padding-top: 130px;
-    gap: 40px;
-  }
-  .hero-author--corner {
-    text-align: left;
-    display: none; /* на мобиле убираем — текста и так много */
-  }
-  .hero-bg img {
-    object-position: 65% 18%;
-  }
-  .hero-bg-overlay {
-    background:
-      linear-gradient(0deg, rgba(8,5,10,1) 0%, rgba(8,5,10,0.7) 20%, rgba(8,5,10,0.4) 55%, transparent 100%),
-      linear-gradient(90deg, rgba(8,5,10,0.85) 0%, rgba(8,5,10,0.4) 60%, transparent 100%),
-      linear-gradient(180deg, rgba(8,5,10,0.5) 0%, transparent 20%);
-  }
-  .hero--fullbleed .hfb-trophy  { top: 14%; right: 4%; }
-  .hero--fullbleed .hfb-members { display: none; }
-  .hero--fullbleed .hfb-jp      { display: none; }
-}
-
-@media (max-width: 520px) {
-  .hero--fullbleed .hfb-trophy { display: none; }
-}
-
-
 /* ============================================================
-   HERO — тюнинг под новое фото muslim-hero.png
-   Фото уже широкоформатное: человек справа ~60–70%,
-   тёмно-бордовый фон слева, тёплый amber справа
+   NAV — дата слева, кнопка справа
    ============================================================ */
-
-/* Позиция: показываем человека в правой трети */
-.hero-bg img {
-  object-position: 68% center;
-  /* Фото уже тёмное — чуть меньше затемнять */
-  filter: contrast(1.04) saturate(1.06) brightness(0.95);
-}
-
-/*
-  Переписываем overlay под эту фотографию:
-  — Левая зона УЖЕ тёмная на фото → overlay может быть мягче
-  — Правая зона тоже уходит в темноту → виньетка лёгкая
-  — Главное: плавный переход снизу в фон сайта
-*/
-.hero-bg-overlay {
-  background:
-    /* Левая часть — тонкий допол. градиент для текста */
-    linear-gradient(
-      108deg,
-      rgba(8,5,10,0.82) 0%,
-      rgba(8,5,10,0.55) 30%,
-      rgba(8,5,10,0.18) 55%,
-      transparent 75%
-    ),
-    /* Снизу → в фон сайта (самое важное — seamless) */
-    linear-gradient(
-      0deg,
-      rgba(8,5,10,1)    0%,
-      rgba(8,5,10,0.7)  10%,
-      rgba(8,5,10,0.2)  28%,
-      transparent       48%
-    ),
-    /* Сверху — для навигации */
-    linear-gradient(
-      180deg,
-      rgba(8,5,10,0.45) 0%,
-      transparent       16%
-    ),
-    /* Правая виньетка — уходим в темноту */
-    linear-gradient(
-      270deg,
-      rgba(8,5,10,0.55) 0%,
-      rgba(8,5,10,0.2)  18%,
-      transparent       40%
-    ),
-    /* Тёплый amber-акцент слева — совпадает с тоном стены на фото */
-    radial-gradient(
-      ellipse 40% 55% at 2% 45%,
-      rgba(160,80,20,0.22),
-      transparent 70%
-    );
-}
-
-/* Подпись автора — чуть выше чтобы не перекрывалась градиентом */
-.hero-author--corner {
-  padding-bottom: 20px;
-}
-
-
-/* ============================================================
-   HERO LAYOUT FIX — исправляем «плавающие» элементы
-   ============================================================ */
-
-/* --- Сетка контента: текст строго в левых 52%, автор справа --- */
-.hero-content {
-  grid-template-columns: 52% 1fr;
-  align-items: flex-end;
-  padding-bottom: 88px;
-  padding-top: 140px;
-}
-
-/* --- Фиксим все floating badges ---
-     Они absolute внутри .hero--fullbleed,
-     убираем старые left/right из main.css и ставим новые */
-
-/* Сбрасываем все позиции из main.css */
-.hero--fullbleed .hero-float-badge {
-  position: absolute;
-}
-
-/* ТОП-3 трейдер — правый верхний, над человеком */
-.hero--fullbleed .hfb-trophy {
-  top: 18%;
-  right: 5%;
-  left: auto;
-  bottom: auto;
-  animation-delay: 0s;
-}
-
-/* 250+ участников — правый, середина */
-.hero--fullbleed .hfb-members {
-  top: auto;
-  bottom: 22%;
-  right: 4%;
-  left: auto;
-  animation-delay: 1.5s;
-}
-
-/* JP Morgan — убираем из hero полностью,
-   он маленький и теряется; вместо него показываем в тексте
-   (или можно разместить снизу-слева) */
-.hero--fullbleed .hfb-jp {
-  display: none;
-}
-
-/* Переопределяем overlay — текстовая зона чётче затемнена */
-.hero-bg-overlay {
-  background:
-    /* Левые 55% — плотное затемнение под текст */
-    linear-gradient(
-      100deg,
-      rgba(8,5,10,0.90) 0%,
-      rgba(8,5,10,0.82) 25%,
-      rgba(8,5,10,0.55) 45%,
-      rgba(8,5,10,0.15) 60%,
-      transparent 72%
-    ),
-    /* Снизу → seamless переход в фон */
-    linear-gradient(
-      0deg,
-      rgba(8,5,10,1)    0%,
-      rgba(8,5,10,0.75) 9%,
-      rgba(8,5,10,0.25) 26%,
-      transparent       45%
-    ),
-    /* Сверху — под навигацию */
-    linear-gradient(
-      180deg,
-      rgba(8,5,10,0.5) 0%,
-      transparent       15%
-    ),
-    /* Правая виньетка */
-    linear-gradient(
-      270deg,
-      rgba(8,5,10,0.5) 0%,
-      rgba(8,5,10,0.15) 15%,
-      transparent 35%
-    ),
-    /* Тёплый amber акцент — тон стены фото */
-    radial-gradient(
-      ellipse 38% 50% at 1% 44%,
-      rgba(150,70,15,0.2),
-      transparent 68%
-    );
-}
-
-/* Текстовый блок — не даём растягиваться шире левой зоны */
-.hero--fullbleed .hero-text {
-  max-width: 560px;
-  width: 100%;
-}
-
-/* Автор — чище, без лишних отступов */
-.hero-author--corner {
-  padding-bottom: 20px;
-  padding-left: 20px;
-}
-
-/* --- Мобильный фикс --- */
-@media (max-width: 980px) {
-  .hero-content {
-    grid-template-columns: 1fr;
-    padding-top: 120px;
-    padding-bottom: 60px;
-  }
-  .hero--fullbleed .hfb-trophy {
-    top: 12%;
-    right: 3%;
-  }
-  .hero--fullbleed .hfb-members {
-    bottom: 18%;
-    right: 3%;
-  }
-}
-
-
-/* ============================================================
-   NAV + BADGES FIX
-   ============================================================ */
-
-/* Nav: добавляем минимальный wordmark слева чтобы кнопка не висела одна */
 .nav-row--solo {
   justify-content: space-between;
   align-items: center;
 }
-.nav-row--solo::before {
-  content: 'Muslim';
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 20px;
-  color: rgba(243,236,226,0.7);
-  letter-spacing: -0.01em;
-}
-
-/* --- Badges: опускаем ниже, не перекрываем лицо --- */
-
-/* ТОП-3 трейдер — уровень плеч */
-.hero--fullbleed .hfb-trophy {
-  top: auto;
-  bottom: 42%;
-  right: 5%;
-}
-
-/* 250+ участников — ниже, у пояса */
-.hero--fullbleed .hfb-members {
-  bottom: 16%;
-  right: 4%;
-}
-
-/* JP Morgan — возвращаем, справа посередине между двумя */
-.hero--fullbleed .hfb-jp {
-  display: flex;
-  top: auto;
-  bottom: 29%;
-  right: 5%;
-  left: auto;
-  animation-delay: 2.2s;
-}
-
-
-/* ============================================================
-   HERO BADGE + PHOTO + AUTHOR FIX
-   ============================================================ */
-
-/* JP Morgan — переносим на ЛЕВУЮ сторону */
-.hero--fullbleed .hfb-jp {
-  display: flex;
-  bottom: 32%;
-  left: 3%;
-  right: auto;
-  top: auto;
-  animation-delay: 2.2s;
-}
-
-/* ТОП-3 — правая сторона, чуть ниже */
-.hero--fullbleed .hfb-trophy {
-  bottom: 46%;
-  right: 5%;
-  top: auto;
-}
-
-/* 250+ — правая сторона, снизу */
-.hero--fullbleed .hfb-members {
-  bottom: 14%;
-  right: 4%;
-}
-
-/* Фото: сдвигаем вниз чтобы голова не касалась кнопки.
-   Уменьшаем object-size эффективно через padding-top героя */
-.hero--fullbleed {
-  padding-top: 0;
-}
-.hero-bg img {
-  object-position: 68% 28%;
-}
-
-/* Контент: поднимаем текст выше — больше воздуха снизу */
-.hero-content {
-  padding-top: 110px;
-  padding-bottom: 110px;
-}
-
-/* "Муслим Абдуллаев" — поднимаем чуть выше от края */
-.hero-author--corner {
-  padding-bottom: 52px;
-}
-
-
-/* ============================================================
-   NAV DATE + BADGE REPOSITION
-   ============================================================ */
-
-/* Убираем псевдо-элемент "Muslim" — теперь там дата */
-.nav-row--solo::before {
-  display: none;
-}
-
-/* Дата в навигации — стиль как у оригинального hero-date */
 .nav-date {
-  margin-bottom: 0;        /* убираем отступ снизу от .hero-date */
+  margin-bottom: 0;
   background: rgba(17,7,9,0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
-
-/* Скрываем дату внутри hero-content — она теперь в nav */
 .hero-content .hero-date {
-  display: none;
+  display: none; /* дата в nav, не дублируем */
 }
-
-/* JP Morgan — правая сторона, между trophy и members */
-.hero--fullbleed .hfb-jp {
-  display: flex;
-  top: auto;
-  left: auto;
-  right: 5%;
-  bottom: 30%;
-  animation-delay: 2.2s;
-}
-
-/* ТОП-3 — правая, выше */
-.hero--fullbleed .hfb-trophy {
-  right: 5%;
-  bottom: 48%;
-  top: auto;
-  left: auto;
-}
-
-/* 250+ — правая, ниже */
-.hero--fullbleed .hfb-members {
-  right: 4%;
-  bottom: 13%;
-  top: auto;
-  left: auto;
-  display: flex;
-}
-
 
 /* ============================================================
-   HERO — убираем левый отступ + бейджи правее тела
+   HERO PHOTO seamless — из main.css
    ============================================================ */
-
-/* Текст — убираем лишний отступ слева, тянем к краю экрана */
-.hero-content.container {
-  max-width: 100%;
-  padding-left: 64px;
-  padding-right: 40px;
+.hero-photo {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
-/* Фото: сдвигаем человека ЛЕВЕЕ — освобождаем правую зону для бейджей */
-.hero-bg img {
-  object-position: 58% 28%;
+/* ============================================================
+   PROMO — цена в левой колонке, фото чистое
+   ============================================================ */
+.promo-card {
+  grid-template-columns: 1.15fr 0.85fr;
 }
 
-/* Overlay: подстраиваем под новое положение фото */
-.hero-bg-overlay {
-  background:
-    linear-gradient(
-      100deg,
-      rgba(8,5,10,0.92) 0%,
-      rgba(8,5,10,0.82) 22%,
-      rgba(8,5,10,0.50) 42%,
-      rgba(8,5,10,0.12) 58%,
-      transparent 70%
-    ),
-    linear-gradient(
-      0deg,
-      rgba(8,5,10,1)    0%,
-      rgba(8,5,10,0.75) 9%,
-      rgba(8,5,10,0.25) 26%,
-      transparent       45%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(8,5,10,0.5) 0%,
-      transparent 15%
-    ),
-    linear-gradient(
-      270deg,
-      rgba(8,5,10,0.65) 0%,
-      rgba(8,5,10,0.2)  12%,
-      transparent 28%
-    );
-}
-
-/* Все 3 бейджа — правый край экрана, правее тела человека */
-.hero--fullbleed .hfb-trophy {
-  right: 1.5%;
-  bottom: 50%;
-  left: auto; top: auto;
-}
-
-.hero--fullbleed .hfb-jp {
-  right: 1.5%;
-  bottom: 32%;
-  left: auto; top: auto;
-}
-
-.hero--fullbleed .hfb-members {
-  right: 1.5%;
-  bottom: 14%;
-  left: auto; top: auto;
+.promo-price {
+  position: static !important;
+  z-index: auto !important;
+  text-align: left !important;
+  padding: 0 !important;
+  width: auto !important;
+  background: none !important;
+  margin-top: 28px;
   display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.promo-price .old {
+  font-size: 20px !important;
+  display: inline !important;
+  margin-bottom: 0 !important;
+}
+.promo-price .arrow {
+  display: inline !important;
+  font-size: 18px !important;
+  margin-bottom: 0 !important;
+}
+.promo-price .new {
+  font-size: clamp(52px, 6.5vw, 86px) !important;
+  line-height: 0.9 !important;
+  filter: none !important;
+}
+.promo-price .save {
+  display: inline-flex !important;
+  margin-top: 0 !important;
+  align-self: flex-end;
+  margin-bottom: 6px;
+}
+
+.promo-price-wrap {
+  min-height: 480px;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.bday-photo-overlay {
+  background:
+    linear-gradient(90deg, rgba(8,5,10,0.65) 0%, rgba(8,5,10,0.12) 38%, transparent 65%),
+    linear-gradient(0deg, rgba(8,5,10,0.3) 0%, transparent 45%);
+}
+
+/* ============================================================
+   DEVICE MOCKUPS — ambient glow под экраном
+   ============================================================ */
+.soft-photo-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: -16px;
+  left: 10%; right: 10%;
+  height: 70px;
+  background: radial-gradient(
+    ellipse 65% 40% at 50% 100%,
+    rgba(80,110,200,0.15),
+    transparent 70%
+  );
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+@media (max-width: 980px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 120px;
+    padding-bottom: 60px;
+  }
+  .hero-author--corner { display: none; }
+  .hero--fullbleed .hfb-trophy  { bottom: 46%; right: 3%; }
+  .hero--fullbleed .hfb-jp      { bottom: 28%; right: 3%; }
+  .hero--fullbleed .hfb-members { bottom: 12%; right: 3%; }
+}
+
+@media (max-width: 520px) {
+  .hero--fullbleed .hero-float-badge { display: none; }
 }
