@@ -347,7 +347,9 @@ em, .italic{
 .hero-cta-row .meta b{ color: var(--gold); font-weight: 600; }
 
 /* ============================================================
-   HERO PHOTO — с диагональным срезом
+   HERO PHOTO — Editorial / cinematic style
+   Убраны: рамки, линии, углы, диагональный срез
+   Добавлено: атмосферное свечение, кинематографический кроп
    ============================================================ */
 .hero-photo-col{
   position: relative;
@@ -355,52 +357,11 @@ em, .italic{
   min-height: 720px;
 }
 
-/* Декоративные линии */
-.hero-deco-line{
-  position: absolute;
-  background: var(--gold);
-  opacity: 0.12;
-  pointer-events: none;
-}
-.hero-deco-line--v{
-  width: 1px;
-  top: -20px;
-  bottom: -20px;
-  right: -24px;
-}
-.hero-deco-line--h{
-  height: 1px;
-  left: -20px;
-  right: -20px;
-  top: 50%;
-}
+/* Убраем декоративные линии и углы полностью */
+.hero-deco-line,
+.hero-corner{ display: none !important; }
 
-/* Угловые орнаменты */
-.hero-corner{
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  pointer-events: none;
-  z-index: 6;
-}
-.hero-corner--tl{
-  top: -6px;
-  left: -6px;
-  border-top: 2px solid var(--gold);
-  border-left: 2px solid var(--gold);
-  border-radius: 4px 0 0 0;
-  opacity: 0.5;
-}
-.hero-corner--br{
-  bottom: -6px;
-  right: -6px;
-  border-bottom: 2px solid var(--gold);
-  border-right: 2px solid var(--gold);
-  border-radius: 0 0 4px 0;
-  opacity: 0.5;
-}
-
-/* Обёртка с позиционированием */
+/* Обёртка фото */
 .hero-photo-wrapper{
   position: absolute;
   inset: 0;
@@ -408,20 +369,34 @@ em, .italic{
   height: 100%;
 }
 
-/* Свечение позади фото */
+/* Атмосферное свечение позади — большое, мягкое */
 .hero-photo-glow{
   position: absolute;
-  bottom: -30px;
-  left: 10%;
-  right: 10%;
-  height: 200px;
-  background: radial-gradient(ellipse, rgba(177,32,47,0.5), transparent 70%);
-  filter: blur(40px);
+  bottom: -60px;
+  left: -10%;
+  right: -10%;
+  height: 300px;
+  background: radial-gradient(ellipse 70% 60% at 50% 100%, rgba(177,32,47,0.55), transparent 70%);
+  filter: blur(50px);
   pointer-events: none;
-  z-index: -1;
+  z-index: 2;
 }
 
-/* Основное фото — диагональный срез */
+/* Боковое свечение слева — теплый золотой акцент */
+.hero-photo-wrapper::before{
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: -30px;
+  width: 120px;
+  height: 60%;
+  background: radial-gradient(ellipse at left, rgba(212,175,106,0.18), transparent 70%);
+  filter: blur(30px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Основное фото — без clip-path, с плавным fade снизу */
 .hero-photo{
   position: absolute;
   inset: 0;
@@ -429,71 +404,38 @@ em, .italic{
   height: 100%;
   overflow: hidden;
   isolation: isolate;
+  border-radius: var(--radius-lg);
   box-shadow:
-    0 40px 80px -20px rgba(0,0,0,0.7),
-    0 0 0 1px var(--line);
-  /* Диагональный срез снизу-справа */
-  clip-path: polygon(
-    0% 0%,
-    100% 0%,
-    100% 88%,
-    72% 100%,
-    0% 100%
-  );
-  border-radius: var(--radius) var(--radius) 0 0;
+    0 60px 120px -30px rgba(0,0,0,0.85),
+    0 0 0 1px rgba(212,175,106,0.08);
 }
-.hero-photo::before{
-  content: '';
-  position: absolute;
-  top: 10%; left: 8%; right: 8%; bottom: 10%;
-  background: radial-gradient(ellipse at center, rgba(177,32,47,0.35), transparent 70%);
-  filter: blur(60px);
-  z-index: -1;
-}
+
 .hero-photo img{
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 30%;
+  object-position: center 20%;
   display: block;
-  filter: contrast(1.05) saturate(1.1);
+  filter: contrast(1.06) saturate(1.08) brightness(0.97);
 }
+
+/* Многослойный оверлей для кинематографического ощущения */
 .hero-photo-shine{
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(135deg, rgba(212,175,106,0.08) 0%, transparent 40%),
-    linear-gradient(0deg, rgba(8,5,10,0.25) 65%, transparent 100%),
-    linear-gradient(180deg, transparent 65%, rgba(8,5,10,0.55) 100%);
+    /* Тонкая золотая виньетка сверху-слева */
+    radial-gradient(ellipse 60% 40% at 0% 0%, rgba(212,175,106,0.07), transparent 60%),
+    /* Глубокое затемнение снизу для текста */
+    linear-gradient(0deg, rgba(8,5,10,0.75) 0%, rgba(8,5,10,0.3) 35%, transparent 65%),
+    /* Тёмная виньетка по краям */
+    radial-gradient(ellipse 100% 100% at 50% 50%, transparent 55%, rgba(8,5,10,0.45) 100%);
   pointer-events: none;
   z-index: 1;
 }
-.hero-photo::after{
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 55% 35% at 80% 100%, rgba(8,5,10,0.5), transparent 70%);
-  pointer-events: none;
-}
 
-/* Диагональная золотая полоска вдоль среза */
-.hero-slash{
-  position: absolute;
-  bottom: 11.6%;
-  left: 0;
-  right: 28%;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    rgba(212,175,106,0.6) 0%,
-    var(--gold) 40%,
-    rgba(212,175,106,0.2) 100%
-  );
-  transform: rotate(-7.8deg);
-  transform-origin: left bottom;
-  pointer-events: none;
-  z-index: 3;
-}
+/* Убираем псевдо-элемент slash */
+.hero-slash{ display: none !important; }
 
 .hero-author{
   position: absolute;
@@ -507,7 +449,7 @@ em, .italic{
   font-style: italic;
   font-weight: 400;
   font-size: 24px;
-  color: rgba(243, 236, 226, 0.7);
+  color: rgba(243, 236, 226, 0.85);
   letter-spacing: -0.01em;
   margin-bottom: 12px;
 }
@@ -570,7 +512,6 @@ em, .italic{
   50%       { transform: translateY(-6px); }
 }
 
-/* Правка 1: убран .hfb-guarantee — осталось только два бейджа справа и один слева */
 .hfb-trophy { top: 12%;  right: -40px; animation-delay: 0s; }
 .hfb-members{ bottom: 32%; right: -50px; animation-delay: 1.5s; }
 .hfb-jp     { top: 38%;  left: -40px; animation-delay: 2.2s; }
@@ -614,7 +555,7 @@ em, .italic{
     aspect-ratio: 3 / 4; height: auto;
     min-height: 0; max-width: 420px;
     margin: 0 auto;
-    clip-path: polygon(0% 0%, 100% 0%, 100% 92%, 80% 100%, 0% 100%);
+    border-radius: var(--radius-lg);
   }
   .hero-photo-wrapper{
     position: relative; inset: auto;
@@ -642,15 +583,9 @@ em, .italic{
     padding: 8px 10px;
   }
   .hfb-icon{ width: 28px; height: 28px; font-size: 16px; }
-  .hero-corner{ display: none; }
 }
 @media (max-width: 520px){
   .hero-float-badge{ display: none; }
-  .hero-photo{
-    clip-path: none;
-    border-radius: var(--radius);
-  }
-  .hero-slash{ display: none; }
 }
 
 /* ============================================================
@@ -821,7 +756,7 @@ em, .italic{
 }
 
 /* ============================================================
-   SECTION: SOFTWARE
+   SECTION: SOFTWARE — Реалистичные мокапы
    ============================================================ */
 .software{
   padding: 140px 0;
@@ -895,57 +830,83 @@ em, .italic{
   position: relative;
 }
 
-/* MacBook */
+/* ---- MacBook — реалистичный ---- */
 .device--macbook{
   position: relative;
   width: 100%;
-  filter: drop-shadow(0 40px 60px rgba(0,0,0,0.75));
-  transition: filter 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  transition: transform 0.5s var(--ease-out);
+  /* Реалистичная тень */
+  filter: drop-shadow(0 2px 1px rgba(0,0,0,0.4)) drop-shadow(0 20px 40px rgba(0,0,0,0.7)) drop-shadow(0 60px 80px rgba(0,0,0,0.4));
 }
 .soft-card:hover .device--macbook{
-  transform: translateY(-6px) rotate3d(1, 0, 0, 2deg);
-  filter: drop-shadow(0 60px 80px rgba(0,0,0,0.85));
+  transform: translateY(-8px) perspective(1000px) rotateX(1.5deg);
 }
+
+/* Крышка (экран) */
 .device--macbook .device-top-bar{
-  height: 28px;
-  background: linear-gradient(180deg, #3a3a46 0%, #2c2c38 100%);
+  height: 30px;
+  background: linear-gradient(180deg,
+    #4a4a55 0%,
+    #3c3c47 30%,
+    #323240 60%,
+    #2a2a36 100%
+  );
   border-radius: 10px 10px 0 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255,255,255,0.08);
-  border-bottom: none;
   position: relative;
+  /* Металлический блик по верхнему краю */
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -1px 0 rgba(0,0,0,0.3);
 }
-.device--macbook .device-top-bar::before{
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-}
+/* Апертура камеры — реалистичная */
 .device--macbook .device-camera{
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #111116;
-  box-shadow: 0 0 0 1.5px rgba(255,255,255,0.1), inset 0 0 4px rgba(0,180,255,0.3);
+  background: radial-gradient(circle at 35% 35%, #2a2a2e, #0a0a0c);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.8),
+    0 0 0 2px rgba(255,255,255,0.04),
+    inset 0 1px 2px rgba(0,180,255,0.15);
 }
+/* Экран */
 .device--macbook .device-screen{
-  border-left: 14px solid #252530;
-  border-right: 14px solid #252530;
-  border-bottom: 10px solid #252530;
+  border-left: 16px solid #2a2a36;
+  border-right: 16px solid #2a2a36;
+  border-bottom: 12px solid #2a2a36;
   aspect-ratio: 16 / 10;
   position: relative;
-  background: #0d0d14;
+  background: #0a0a12;
+  /* Внутренняя тень экрана */
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+}
+/* Бликовый слой на экране */
+.device--macbook .device-screen::before{
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.04) 0%,
+    transparent 35%,
+    transparent 65%,
+    rgba(0,0,0,0.08) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
 }
 .device--macbook .device-screen::after{
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
-  pointer-events: none;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  z-index: 2;
 }
+/* Нижняя часть (основание ноутбука) */
 .device--macbook .device-bottom-bar{
   display: flex;
   flex-direction: column;
@@ -953,80 +914,139 @@ em, .italic{
 }
 .device--macbook .device-hinge{
   width: 100%;
-  height: 12px;
-  background: linear-gradient(180deg, #2a2a36, #1e1e28);
-  border-left: 14px solid #252530;
-  border-right: 14px solid #252530;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  height: 10px;
+  background: linear-gradient(180deg,
+    #252530 0%,
+    #1e1e28 50%,
+    #18181f 100%
+  );
+  border-left: 16px solid #2a2a36;
+  border-right: 16px solid #2a2a36;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
 }
 .device--macbook .device-foot{
-  width: 45%;
-  height: 10px;
-  background: linear-gradient(180deg, #232330, #1a1a24);
-  border-radius: 0 0 8px 8px;
+  width: 50%;
+  height: 12px;
+  background: linear-gradient(180deg,
+    #2a2a38 0%,
+    #222230 40%,
+    #1c1c28 100%
+  );
+  border-radius: 0 0 10px 10px;
   position: relative;
+  box-shadow:
+    0 6px 20px rgba(0,0,0,0.6),
+    inset 0 -1px 0 rgba(0,0,0,0.4);
 }
+/* Глянцевый блик на основании */
 .device--macbook .device-foot::before{
   content: '';
   position: absolute;
-  inset: 0;
-  border-radius: 0 0 8px 8px;
-  background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.04) 50%, transparent 70%);
-}
-.device--dark .device-top-bar{ background: linear-gradient(180deg, #1a1a22 0%, #131318 100%); }
-.device--dark .device-screen{ border-color: #111116; background: #06060a; }
-.device--dark .device-hinge{ background: linear-gradient(180deg, #131318, #0d0d12); border-color: #111116; }
-.device--dark .device-foot{ background: linear-gradient(180deg, #0f0f14, #0a0a0f); }
-
-/* Monitor */
-.device--monitor{
-  position: relative;
-  width: 100%;
-  filter: drop-shadow(0 40px 60px rgba(0,0,0,0.75));
-  transition: filter 0.5s var(--ease-out), transform 0.5s var(--ease-out);
-}
-.soft-card:hover .device--monitor{
-  transform: translateY(-6px);
-  filter: drop-shadow(0 60px 80px rgba(0,0,0,0.85));
-}
-.device--monitor .device-screen{
-  aspect-ratio: 16 / 9;
-  border: 14px solid #1e1e28;
-  border-radius: 10px 10px 0 0;
-  border-bottom-width: 28px;
-  position: relative;
-  background: #060609;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), inset 0 0 0 1px rgba(0,0,0,0.8);
-}
-.device--monitor .device-screen::before{
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0; left: 15%; right: 15%;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
 }
+/* Прорезиновые ножки */
+.device--macbook .device-foot::after{
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 8%;
+  right: 8%;
+  height: 2px;
+  border-radius: 1px;
+  background: rgba(0,0,0,0.5);
+}
+
+/* Тёмная версия MacBook */
+.device--dark .device-top-bar{
+  background: linear-gradient(180deg, #1e1e26 0%, #16161e 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.4);
+}
+.device--dark .device-screen{
+  border-color: #141418;
+  background: #05050a;
+}
+.device--dark .device-hinge{
+  background: linear-gradient(180deg, #141418, #0f0f14);
+  border-color: #141418;
+}
+.device--dark .device-foot{
+  background: linear-gradient(180deg, #18181e, #111116);
+}
+
+/* ---- Monitor — реалистичный ---- */
+.device--monitor{
+  position: relative;
+  width: 100%;
+  transition: transform 0.5s var(--ease-out);
+  filter: drop-shadow(0 2px 1px rgba(0,0,0,0.4)) drop-shadow(0 20px 40px rgba(0,0,0,0.7)) drop-shadow(0 60px 80px rgba(0,0,0,0.35));
+}
+.soft-card:hover .device--monitor{
+  transform: translateY(-8px);
+}
+/* Корпус монитора */
+.device--monitor .device-screen{
+  aspect-ratio: 16 / 9;
+  border: 14px solid #1a1a24;
+  border-radius: 10px 10px 4px 4px;
+  border-bottom-width: 30px;
+  position: relative;
+  background: #07070d;
+  /* Металлический блик по периметру */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    inset 0 0 0 1px rgba(0,0,0,0.7),
+    inset 0 0 30px rgba(0,0,0,0.5);
+}
+/* Статус-светодиод снизу по центру */
+.device--monitor .device-screen::before{
+  content: '';
+  position: absolute;
+  bottom: -21px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #1a9e5a;
+  box-shadow: 0 0 6px rgba(26,158,90,0.7);
+  z-index: 3;
+}
+/* Глянцевый блик на корпусе */
 .device--monitor .device-screen::after{
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 40%);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.04) 0%,
+    transparent 30%,
+    transparent 70%,
+    rgba(0,0,0,0.06) 100%
+  );
   pointer-events: none;
 }
+/* Подставка */
 .device--monitor .device-monitor-stand{
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .device--monitor .device-monitor-neck{
-  width: 12px;
-  height: 28px;
-  background: linear-gradient(180deg, #1e1e28, #14141c);
+  width: 14px;
+  height: 32px;
+  background: linear-gradient(180deg, #1e1e28 0%, #16161e 100%);
+  box-shadow: -1px 0 0 rgba(255,255,255,0.04), 1px 0 0 rgba(0,0,0,0.4);
 }
 .device--monitor .device-monitor-base{
-  width: 40%;
-  height: 10px;
-  background: linear-gradient(180deg, #1e1e28, #14141c);
-  border-radius: 0 0 6px 6px;
+  width: 42%;
+  height: 12px;
+  background: linear-gradient(180deg, #1e1e28 0%, #14141c 60%, #101018 100%);
+  border-radius: 2px 2px 8px 8px;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 @media (max-width: 980px){
@@ -1055,7 +1075,6 @@ em, .italic{
 .who h2 em{ display: block; }
 .who .bullets li{ font-size: 17px; }
 
-/* ---- combo-showcase (замена блока КОМБО) ---- */
 .who-visual{
   position: relative;
   background: none;
@@ -1457,196 +1476,169 @@ em, .italic{
 }
 
 /* ============================================================
-   SECTION: PROMO — BIRTHDAY MODE
+   SECTION: PROMO — День рождения (элегантный, сдержанный)
    ============================================================ */
 .promo{
   padding: 80px 0;
 }
 .promo-card{
   position: relative;
-  padding: 64px 56px;
+  padding: 0;
   border-radius: var(--radius-lg);
   background:
-    radial-gradient(circle at 80% 30%, rgba(212,175,106,0.22), transparent 50%),
-    radial-gradient(circle at 20% 80%, rgba(177,32,47,0.28), transparent 50%),
+    radial-gradient(circle at 60% 30%, rgba(212,175,106,0.12), transparent 50%),
+    radial-gradient(circle at 10% 80%, rgba(177,32,47,0.18), transparent 50%),
     linear-gradient(135deg, var(--bg-elevated), var(--bg-near));
   border: 1px solid var(--line-strong);
   overflow: hidden;
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 60px;
-  align-items: center;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  align-items: stretch;
+  min-height: 560px;
 }
 .promo-card::before{
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; height: 1px;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  z-index: 2;
 }
-.confetti-canvas{
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  border-radius: var(--radius-lg);
-}
-.bday-deco--stars{
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 24px;
-  z-index: 1;
-  pointer-events: none;
-}
-.bday-deco--stars span{
-  font-size: 16px;
-  color: var(--gold);
-  opacity: 0.5;
-  animation: starTwinkle 2s ease-in-out infinite;
-}
-.bday-deco--stars span:nth-child(2){ animation-delay: 0.7s; opacity: 0.7; }
-.bday-deco--stars span:nth-child(3){ animation-delay: 1.4s; }
-@keyframes starTwinkle{
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50%       { opacity: 0.9; transform: scale(1.3); }
-}
-.bday-balloons{
-  position: absolute;
-  top: 0; right: 60px;
-  pointer-events: none;
-  z-index: 1;
-  display: flex;
-  gap: 8px;
-}
-.balloon{
-  font-size: 28px;
-  animation: balloonBob 3s ease-in-out infinite;
-  transform-origin: bottom center;
-  opacity: 0.7;
-}
-.b-1{ animation-delay: 0s; }
-.b-2{ animation-delay: 1s; }
-.b-3{ animation-delay: 0.5s; }
-@keyframes balloonBob{
-  0%, 100% { transform: translateY(0) rotate(-3deg); }
-  50%       { transform: translateY(-10px) rotate(3deg); }
-}
+
+/* Конфетти — убираем (дешёвый эффект) */
+.confetti-canvas{ display: none !important; }
+
+/* Убираем баллоны и звёздочки */
+.bday-deco--stars,
+.bday-balloons{ display: none !important; }
+
+/* ---- Текстовая часть ---- */
 .promo-text{
   position: relative;
   z-index: 2;
+  padding: 56px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .promo-tag{
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 16px;
-  background: rgba(212,175,106,0.1);
-  border: 1px solid var(--line-strong);
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(212,175,106,0.08);
+  border: 1px solid rgba(212,175,106,0.2);
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--gold);
-  margin-bottom: 22px;
+  margin-bottom: 24px;
+  width: fit-content;
 }
 .promo h2{
-  font-size: clamp(40px, 5vw, 64px);
-  margin-bottom: 22px;
+  font-size: clamp(36px, 4vw, 56px);
+  margin-bottom: 18px;
   letter-spacing: -0.03em;
 }
 .promo h2 em{ display: block; }
 .promo p{
   color: var(--text-muted);
-  font-size: 17px;
+  font-size: 16px;
   margin: 0 0 32px;
-  max-width: 460px;
+  max-width: 420px;
+  line-height: 1.65;
 }
 .promo-dates{
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 0;
+  max-width: 380px;
 }
 .promo-date{
-  padding: 18px 22px;
-  background: var(--bg-card);
+  padding: 16px 18px;
+  background: rgba(255,255,255,0.025);
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 86px;
 }
 .promo-date .lbl{
-  font-size: 10px;
-  letter-spacing: 0.2em;
+  font-size: 9px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--text-faint);
   margin-bottom: 6px;
 }
 .promo-date .val{
   font-family: var(--display);
   font-style: italic;
   font-weight: 500;
-  font-size: 28px;
+  font-size: 24px;
   color: var(--text);
   line-height: 1.1;
 }
 .promo-date.is-start .val{ color: var(--gold); }
 .countdown{
-  margin-top: 32px;
+  margin-top: 28px;
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 380px;
 }
 .cd-unit{
   flex: 1;
-  min-width: 60px;
   text-align: center;
   padding: 14px 4px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.025);
+  border: 1px solid var(--line-soft);
   border-radius: var(--radius-sm);
 }
 .cd-unit .n{
   font-family: var(--display);
   font-style: italic;
   font-weight: 600;
-  font-size: 36px;
+  font-size: 32px;
   color: var(--gold);
   display: block;
   line-height: 1;
 }
 .cd-unit .l{
-  font-size: 10px;
-  letter-spacing: 0.16em;
+  font-size: 9px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--text-faint);
   margin-top: 6px;
 }
+
+/* ---- Фото + цена — правая половина ---- */
 .promo-price-wrap{
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  justify-content: flex-end;
+  overflow: hidden;
+  /* Полная высота блока */
+  min-height: 560px;
 }
+
+/* Фото занимает всю правую половину */
 .bday-photo{
+  position: absolute;
+  inset: 0;
   width: 100%;
-  max-width: 340px;
-  margin: 0 auto;
-  position: relative;
+  height: 100%;
 }
 .bday-photo-frame{
   position: relative;
-  border-radius: 16px;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.55);
-  aspect-ratio: 3 / 4;
 }
 .bday-photo-frame img{
   width: 100%;
@@ -1654,81 +1646,58 @@ em, .italic{
   object-fit: cover;
   object-position: center 15%;
   display: block;
-  filter: contrast(1.04) saturate(1.08) brightness(1.04);
+  filter: contrast(1.04) saturate(0.95) brightness(0.85);
 }
-.bday-glow{
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(135deg, rgba(212,175,106,0.12) 0%, transparent 50%),
-    linear-gradient(0deg, rgba(177,32,47,0.2) 0%, transparent 40%);
-  pointer-events: none;
-  z-index: 1;
-}
+
+/* Градиент поверх фото для читаемости цены */
 .bday-photo-overlay{
   position: absolute;
   inset: 0;
+  background:
+    linear-gradient(0deg, rgba(8,5,10,0.88) 0%, rgba(8,5,10,0.4) 40%, rgba(8,5,10,0.1) 70%, transparent 100%),
+    linear-gradient(270deg, transparent 60%, rgba(8,5,10,0.3) 100%);
   z-index: 1;
 }
+.bday-glow{ display: none; }
+
+/* Убираем стикеры */
+.bday-sticker{ display: none !important; }
+
+/* Лента — оставляем, делаем тоньше */
 .bday-ribbon{
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 3;
+  /* Скрываем — цена заменяет */
+  display: none;
+}
+
+/* Цена поверх фото */
+.promo-price{
+  position: relative;
+  z-index: 3;
   text-align: center;
-  padding: 14px;
-  background: linear-gradient(0deg, rgba(8,5,10,0.9) 0%, rgba(8,5,10,0.5) 100%);
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 16px;
-  color: var(--gold);
-  letter-spacing: 0.04em;
-  backdrop-filter: blur(4px);
+  padding: 32px 32px 40px;
+  width: 100%;
 }
-.bday-sticker{
-  position: absolute;
-  z-index: 4;
-  font-size: 32px;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
-}
-.bday-sticker--cake{
-  top: -14px;
-  right: -14px;
-  animation: stickerSpin 8s linear infinite;
-}
-.bday-sticker--confetti{
-  bottom: 50px;
-  left: -14px;
-  animation: stickerBounce 2.5s ease-in-out infinite;
-}
-@keyframes stickerSpin{
-  0%   { transform: rotate(0deg) scale(1); }
-  25%  { transform: rotate(15deg) scale(1.15); }
-  75%  { transform: rotate(-10deg) scale(0.95); }
-  100% { transform: rotate(0deg) scale(1); }
-}
-@keyframes stickerBounce{
-  0%, 100% { transform: translateY(0) rotate(-10deg); }
-  50%       { transform: translateY(-8px) rotate(5deg); }
-}
-.promo-price{ text-align: center; }
 .promo-price .old{
   font-family: var(--display);
   font-style: italic;
-  font-weight: 500;
-  font-size: 44px;
-  color: var(--text-faint);
+  font-weight: 400;
+  font-size: 28px;
+  color: rgba(243,236,226,0.4);
   text-decoration: line-through;
-  text-decoration-color: var(--wine-bright);
-  text-decoration-thickness: 3px;
+  text-decoration-color: rgba(177,32,47,0.7);
+  text-decoration-thickness: 2px;
   display: block;
   margin-bottom: 4px;
+  letter-spacing: -0.02em;
 }
 .promo-price .arrow{
-  font-size: 20px;
-  color: var(--gold);
+  font-size: 16px;
+  color: rgba(212,175,106,0.6);
   display: block;
   margin-bottom: 4px;
 }
@@ -1736,38 +1705,47 @@ em, .italic{
   font-family: var(--display);
   font-style: italic;
   font-weight: 600;
-  font-size: clamp(72px, 10vw, 120px);
-  background: linear-gradient(135deg, var(--gold), var(--wine-bright));
+  font-size: clamp(80px, 12vw, 130px);
+  background: linear-gradient(135deg, #f0dba8 0%, var(--gold) 40%, var(--bronze) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   display: block;
-  line-height: 1;
+  line-height: 0.9;
   letter-spacing: -0.04em;
+  /* Тонкая золотая тень для объёма */
+  filter: drop-shadow(0 4px 24px rgba(212,175,106,0.25));
 }
-.promo-price .new sup{ font-size: 0.45em; }
+.promo-price .new sup{ font-size: 0.42em; }
 .promo-price .save{
   display: inline-block;
   margin-top: 16px;
-  padding: 6px 14px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
+  padding: 5px 14px;
+  background: rgba(212,175,106,0.08);
+  border: 1px solid rgba(212,175,106,0.2);
   border-radius: 999px;
-  font-size: 13px;
-  color: var(--gold);
-  letter-spacing: 0.04em;
+  font-size: 12px;
+  color: var(--gold-soft);
+  letter-spacing: 0.06em;
 }
+
 @media (max-width: 980px){
   .promo-card{
     grid-template-columns: 1fr;
-    padding: 44px 28px;
-    gap: 32px;
+    min-height: auto;
   }
-  .promo-price-wrap{ flex-direction: row; flex-wrap: wrap; justify-content: center; }
-  .bday-photo{ max-width: 260px; }
-  .promo-price .new{ font-size: clamp(60px, 22vw, 100px); }
-  .promo-price .old{ font-size: 32px; }
-  .bday-balloons{ right: 20px; }
+  .promo-text{
+    padding: 40px 28px 32px;
+    order: 2;
+  }
+  .promo-price-wrap{
+    min-height: 380px;
+    order: 1;
+  }
+  .promo-dates,
+  .countdown{
+    max-width: 100%;
+  }
 }
 
 /* ============================================================
