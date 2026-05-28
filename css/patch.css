@@ -873,3 +873,53 @@
 .hero-author--corner {
   padding-bottom: 52px;
 }
+
+
+/* ============================================================
+   NAV DATE + BADGE REPOSITION
+   ============================================================ */
+
+/* Убираем псевдо-элемент "Muslim" — теперь там дата */
+.nav-row--solo::before {
+  display: none;
+}
+
+/* Дата в навигации — стиль как у оригинального hero-date */
+.nav-date {
+  margin-bottom: 0;        /* убираем отступ снизу от .hero-date */
+  background: rgba(17,7,9,0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Скрываем дату внутри hero-content — она теперь в nav */
+.hero-content .hero-date {
+  display: none;
+}
+
+/* JP Morgan — правая сторона, между trophy и members */
+.hero--fullbleed .hfb-jp {
+  display: flex;
+  top: auto;
+  left: auto;
+  right: 5%;
+  bottom: 30%;
+  animation-delay: 2.2s;
+}
+
+/* ТОП-3 — правая, выше */
+.hero--fullbleed .hfb-trophy {
+  right: 5%;
+  bottom: 48%;
+  top: auto;
+  left: auto;
+}
+
+/* 250+ — правая, ниже */
+.hero--fullbleed .hfb-members {
+  right: 4%;
+  bottom: 13%;
+  top: auto;
+  left: auto;
+  display: flex;
+}
