@@ -1,728 +1,500 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="theme-color" content="#08050a">
+/* ============================================================
+   PATCH v3 — три правки hero:
+   1. Текст сдвинут к центру, не прижат к левому краю
+   2. JP Morgan badge — справа от тела, по стрелке
+   3. Фото чуть меньше — больше воздуха над головой
+   ============================================================ */
 
-<title>VIP ПОДПИСКА 3X — Обновлённая. Муслим Абдуллаев</title>
-<meta name="description" content="Закрытая аналитика, ИИ-индикатор и личное сопровождение Муслима. Старт 7 июня. Гарантия возврата по договору.">
+/* ============================================================
+   BASE — hero fullbleed layout
+   ============================================================ */
+.hero--fullbleed {
+  position: relative;
+  min-height: 100vh;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
 
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
-<link rel="shortcut icon" href="favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+.hero--fullbleed .hero-grid,
+.hero--fullbleed .hero-photo-col,
+.hero--fullbleed .hero-photo-wrapper,
+.hero--fullbleed .hero-photo-glow {
+  display: none !important;
+}
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..700,30..100;1,9..144,400..700,30..100&display=swap" rel="stylesheet">
+/* Фоновое фото */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: contrast(1.04) saturate(1.06) brightness(0.92);
+}
 
-<link rel="stylesheet" href="css/main.css">
-</head>
-<body>
+/* ============================================================
+   FIX 3 — Фото: голова значительно ниже от кнопки навигации
+   Увеличиваем вертикальное смещение с 35% до 55%
+   ============================================================ */
+.hero-bg img {
+  object-position: 60% 55%;
+}
 
-<!-- ============================== NAV ============================== -->
-<nav class="nav">
-  <div class="container nav-row">
-    <a href="#" class="nav-brand">Cryptocentral<span>.</span> Muslim</a>
-    <a href="#price" class="btn btn-primary nav-cta">Выбрать тариф</a>
-  </div>
-</nav>
+/* ============================================================
+   OVERLAY — многослойный, текстовая зона слева затемнена
+   ============================================================ */
+.hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    /* Левая зона — плотное затемнение под текст */
+    linear-gradient(
+      100deg,
+      rgba(8,5,10,0.93) 0%,
+      rgba(8,5,10,0.82) 22%,
+      rgba(8,5,10,0.48) 44%,
+      rgba(8,5,10,0.10) 60%,
+      transparent 72%
+    ),
+    /* Снизу — seamless переход в фон */
+    linear-gradient(
+      0deg,
+      rgba(8,5,10,1)    0%,
+      rgba(8,5,10,0.75) 9%,
+      rgba(8,5,10,0.22) 26%,
+      transparent       44%
+    ),
+    /* Сверху — под навигацию */
+    linear-gradient(
+      180deg,
+      rgba(8,5,10,0.55) 0%,
+      transparent 16%
+    ),
+    /* Правая виньетка */
+    linear-gradient(
+      270deg,
+      rgba(8,5,10,0.55) 0%,
+      rgba(8,5,10,0.18) 14%,
+      transparent 32%
+    ),
+    /* Тёплый amber акцент слева */
+    radial-gradient(
+      ellipse 36% 50% at 0% 44%,
+      rgba(150,70,15,0.18),
+      transparent 68%
+    );
+}
 
-<!-- ============================== HERO ============================== -->
-<header class="hero">
-  <div class="container hero-grid">
-    <div class="hero-text reveal">
-      <div class="hero-date">
-        <b>07 Июня</b>
-        <span>начало потока</span>
-      </div>
+/* ============================================================
+   FIX 1 — Текст к центру, не прижат к краю
+   Контейнер: отступ слева 8–12% от ширины экрана
+   ============================================================ */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: grid;
+  /* Текст занимает ~50% от центра, правее чем раньше */
+  grid-template-columns: 50% 1fr;
+  align-items: flex-end;
+  padding-top: 120px;
+  padding-bottom: 100px;
+  gap: 40px;
+  /* Сдвигаем весь контейнер правее — ближе к середине экрана */
+  padding-left: 10%;
+  padding-right: 3%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 
-      <h1 class="hero-title">
-        VIP <em>подписка</em>
-        <span class="x">3×</span>
-      </h1>
+/* Текстовый блок: выравнивание чуть улучшено */
+.hero--fullbleed .hero-text {
+  max-width: 520px;
+  width: 100%;
+}
 
-      <p class="hero-sub">
-        <em>Создай доход в крипте</em><br>
-        с помощью закрытой системы Муслима
-      </p>
+/* Дата — чуть меньше отступ снизу */
+.hero--fullbleed .hero-text .hero-date {
+  margin-bottom: 24px;
+}
 
-      <ul class="bullets">
-        <li>
-          <span class="bullet-dot"></span>
-          <span>Закрытая аналитика <b>Муслима</b> и его команды</span>
-        </li>
-        <li>
-          <span class="bullet-dot"></span>
-          <span>Индикаторы WhenBuy <b>и ИИ-оракул на волнах Эллиота</b></span>
-        </li>
-        <li>
-          <span class="bullet-dot"></span>
-          <span>Обучение и личное <b>сопровождение Муслима</b></span>
-        </li>
-      </ul>
+/* Заголовок — tight, без лишних отступов */
+.hero--fullbleed .hero-title {
+  margin-bottom: 20px;
+}
 
-      <div class="hero-cta-row">
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfnZXVhQt4cYrQ3w0EErKR0T7HWiEtl26lQ350dkrHIHJtu6g/viewform?usp=header" target="_blank" rel="noopener" class="btn btn-primary">
-          Заполнить анкету
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-        <div class="meta">
-          с гарантией возврата<br>
-          <b>по договору</b>
-        </div>
-      </div>
-    </div>
+/* Подзаголовок ближе к заголовку */
+.hero--fullbleed .hero-sub {
+  margin-bottom: 28px;
+}
 
-    <!-- ======= HERO PHOTO — без рамок, кинематографический ======= -->
-    <div class="hero-photo-col reveal">
-      <!-- Обёртка фото -->
-      <div class="hero-photo-wrapper">
-        <!-- Свечение позади -->
-        <div class="hero-photo-glow"></div>
+/* Буллеты — чуть компактнее */
+.hero--fullbleed .bullets {
+  margin-bottom: 36px;
+}
 
-        <!-- Основное фото -->
-        <div class="hero-photo">
-          <img src="img/muslim-hero.jpg" alt="Муслим Абдуллаев — основатель Cryptocentral">
-          <div class="hero-photo-shine"></div>
+/* ============================================================
+   АВТОР — правый нижний угол
+   ============================================================ */
+.hero-author--corner {
+  text-align: right;
+  align-self: flex-end;
+  padding-bottom: 28px;
+  padding-left: 20px;
+}
+.hero-author--corner .name {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  color: rgba(243,236,226,0.75);
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+}
+.hero-author--corner ul {
+  list-style: none;
+  padding: 0; margin: 0;
+}
+.hero-author--corner li {
+  position: relative;
+  padding-right: 14px;
+  font-size: 12px;
+  color: rgba(243,236,226,0.45);
+  line-height: 1.5;
+}
+.hero-author--corner li + li { margin-top: 6px; }
+.hero-author--corner li span { color: rgba(212,175,106,0.75); }
+.hero-author--corner li::before {
+  content: '';
+  position: absolute;
+  right: 0; top: 8px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(212,175,106,0.4);
+}
 
-          <div class="hero-author">
-            <div class="name">Муслим Абдуллаев</div>
-            <ul>
-              <li><span>3 место</span> как лучший трейдер 2023 за летний сезон в Bybit</li>
-              <li>Экс <span>амбассадор биржи Bybit</span></li>
-              <li>Ученик экс-президента <span>JP Morgan Chase</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+/* ============================================================
+   FIX 2 — Бейджи
+   JP Morgan — справа от тела (по стрелке на скриншоте)
+   ТОП-3 — правый верх, над плечом
+   250+ — правый низ
+   ============================================================ */
+.hero--fullbleed .hero-float-badge {
+  position: absolute;
+  z-index: 5;
+  min-width: 155px;
+}
 
-      <!-- Floating badge — трофей -->
-      <div class="hero-float-badge hfb-trophy">
-        <div class="hfb-icon">🏆</div>
-        <div class="hfb-body">
-          <strong>ТОП-3 трейдер</strong>
-          <span>Bybit 2023</span>
-        </div>
-      </div>
+/* ТОП-3 трейдер — правый верх, над плечом */
+.hero--fullbleed .hfb-trophy {
+  top: auto;
+  bottom: 52%;
+  right: 3%;
+  left: auto;
+  animation-delay: 0s;
+}
 
-      <!-- Floating badge — участники -->
-      <div class="hero-float-badge hfb-members">
-        <div class="hfb-icon">👥</div>
-        <div class="hfb-body">
-          <strong>250+</strong>
-          <span>участников</span>
-        </div>
-      </div>
+/* JP Morgan Chase — касается груди, чуть правее центра */
+.hero--fullbleed .hfb-jp {
+  display: flex;
+  top: auto;
+  bottom: 36%;
+  right: auto;
+  left: 60%;
+  animation-delay: 1.2s;
+}
 
-      <!-- Floating badge — JP Morgan -->
-      <div class="hero-float-badge hfb-jp">
-        <div class="hfb-icon">🏦</div>
-        <div class="hfb-body">
-          <strong>JP Morgan Chase</strong>
-          <span>ученик экс-президента</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</header>
+/* 250+ участников — поднимаем выше, не перекрывает подпись автора */
+.hero--fullbleed .hfb-members {
+  top: auto;
+  bottom: 24%;
+  right: 3%;
+  left: auto;
+  display: flex;
+  animation-delay: 2.2s;
+}
 
-<!-- ============================== GALLERY SLIDER ============================== -->
-<section class="gallery-slider">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">Жизнь клуба</span>
-      <h2 class="section-title">Мы не просто <em>торгуем</em></h2>
-      <p class="section-sub">Встречи, конференции, путешествия — закрытый клуб единомышленников</p>
-    </div>
-  </div>
+/* Плавный переход hero → следующая секция */
+.hero--fullbleed::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0; right: 0;
+  height: 140px;
+  background: linear-gradient(0deg, var(--bg-deep) 0%, transparent 100%);
+  z-index: 3;
+  pointer-events: none;
+}
 
-  <div class="gs-viewport reveal">
-    <div class="gs-track" id="gsTrack">
-      <!-- Загрузите фото в папку img/gallery/ с именами 1.jpg, 2.jpg... -->
-      <div class="gs-slide"><img src="img/gallery/1.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/2.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/3.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/4.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/5.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/6.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/7.jpg" alt="" loading="lazy"></div>
-      <div class="gs-slide"><img src="img/gallery/8.jpg" alt="" loading="lazy"></div>
-    </div>
-    <button class="gs-btn gs-btn--prev" id="gsPrev" aria-label="Назад">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M14 4l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <button class="gs-btn gs-btn--next" id="gsNext" aria-label="Вперёд">
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M8 4l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <div class="gs-fade gs-fade--left"></div>
-    <div class="gs-fade gs-fade--right"></div>
-  </div>
-  <div class="gs-dots" id="gsDots"></div>
-</section>
+/* ============================================================
+   NAV — дата слева, кнопка справа
+   ============================================================ */
+.nav-row--solo {
+  justify-content: space-between;
+  align-items: center;
+}
 
-<!-- ============================== REVIEWS ============================== -->
-<section class="section reviews">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">Отзывы участников</span>
-      <h2 class="section-title">Это не <em>волшебная таблетка</em></h2>
-      <p class="section-sub">Но <em>250+</em> человек уже используют все сервисы подписки <br>и применяют нашу стратегию</p>
-      <p class="reviews-hint">Нажмите на скриншот, чтобы открыть</p>
-    </div>
+/* Растягиваем nav на полную ширину экрана */
+.nav .container.nav-row--solo,
+.nav-row--solo {
+  max-width: 100%;
+  padding-left: 10%;
+  padding-right: 32px;
+}
 
-    <div class="reviews-marquee">
-      <div class="reviews-track" id="reviewsTrack">
-        <div class="review-item" data-lightbox><img src="img/otz/16.jpg" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/17.jpg" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/18.jpg" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/19.jpg" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/20.jpg" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/1.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/2.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/3.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/4.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/5.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/6.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/7.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/8.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/9.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/10.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/11.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/12.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/13.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/14.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/15.jfif" alt="" loading="lazy"></div>
-        <!-- дублируем для бесшовной прокрутки -->
-        <div class="review-item" data-lightbox><img src="img/otz/16.jpg" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/17.jpg" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/18.jpg" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/19.jpg" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/20.jpg" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/1.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/2.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/3.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/4.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/5.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/6.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/7.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/8.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/9.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/10.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/11.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/12.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/13.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/14.jfif" alt="" loading="lazy"></div>
-        <div class="review-item" data-lightbox><img src="img/otz/15.jfif" alt="" loading="lazy"></div>
-      </div>
-    </div>
-  </div>
-</section>
+/* Кнопка прижата к самому правому краю */
+.nav-row--solo .nav-cta {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.nav-date {
+  margin-bottom: 0;
+  background: rgba(17,7,9,0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.hero-content .hero-date {
+  display: none; /* дата в nav, не дублируем */
+}
 
-<!-- ============================== LIGHTBOX ============================== -->
-<div id="lightbox" class="lightbox" role="dialog" aria-modal="true">
-  <button class="lightbox-close" id="lightboxClose" aria-label="Закрыть">
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 3l14 14M17 3L3 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-  </button>
-  <div class="lightbox-backdrop"></div>
-  <img id="lightboxImg" src="" alt="Отзыв">
-</div>
+/* ============================================================
+   HERO PHOTO seamless — из main.css
+   ============================================================ */
+.hero-photo {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+}
 
-<!-- ============================== SOFTWARE ============================== -->
-<section class="software">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">Что внутри подписки</span>
-      <h2 class="section-title">Получите <em>три софта</em></h2>
-      <p class="section-sub">Три инструмента, которые работают как единая система: обучение, прогнозирование и контроль рисков</p>
-    </div>
+/* ============================================================
+   PROMO — цена в левой колонке, фото чистое
+   ============================================================ */
+.promo-card {
+  grid-template-columns: 1.15fr 0.85fr;
+}
 
-    <div class="software-stack">
+.promo-price {
+  position: static !important;
+  z-index: auto !important;
+  text-align: left !important;
+  padding: 0 !important;
+  width: auto !important;
+  background: none !important;
+  margin-top: 28px;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.promo-price .old {
+  font-size: 20px !important;
+  display: inline !important;
+  margin-bottom: 0 !important;
+}
+.promo-price .arrow {
+  display: inline !important;
+  font-size: 18px !important;
+  margin-bottom: 0 !important;
+}
+.promo-price .new {
+  font-size: clamp(52px, 6.5vw, 86px) !important;
+  line-height: 0.9 !important;
+  filter: none !important;
+}
+.promo-price .save {
+  display: inline-flex !important;
+  margin-top: 0 !important;
+  align-self: flex-end;
+  margin-bottom: 6px;
+}
 
-      <!-- 1. Платформа — MacBook -->
-      <article class="soft-card reveal">
-        <div class="soft-photo-wrap">
-          <div class="device device--macbook">
-            <div class="device-top-bar">
-              <div class="device-camera"></div>
-            </div>
-            <div class="soft-photo device-screen">
-              <img src="img/software/platform.png" alt="Платформа с обучением">
-            </div>
-            <div class="device-bottom-bar">
-              <div class="device-hinge"></div>
-              <div class="device-foot"></div>
-            </div>
-          </div>
-        </div>
-        <div class="soft-content">
-          <div class="soft-num">01 — Платформа</div>
-          <h3 class="soft-title">Пошаговый анимационный <em>фильм с обучением</em></h3>
-          <p class="soft-desc">15 глав по трейдингу и инвестициям. От базы до продвинутых сетапов — структурированно, как сериал.</p>
-        </div>
-      </article>
+.promo-price-wrap {
+  min-height: 480px;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
 
-      <!-- 2. ИИ-индикатор — Монитор -->
-      <article class="soft-card reveal">
-        <div class="soft-photo-wrap">
-          <div class="device device--monitor">
-            <div class="soft-photo device-screen">
-              <img src="img/software/ai.png" alt="ИИ-индикатор на волнах Эллиота">
-            </div>
-            <div class="device-monitor-stand">
-              <div class="device-monitor-neck"></div>
-              <div class="device-monitor-base"></div>
-            </div>
-          </div>
-        </div>
-        <div class="soft-content">
-          <div class="soft-num">02 — ИИ-индикатор</div>
-          <h3 class="soft-title">Прогноз <em>на волнах Эллиота</em></h3>
-          <p class="soft-desc">На базе волн Эллиота нейросеть строит гипотезу, куда пойдёт монета. Показывает зоны входа и цели.</p>
-        </div>
-      </article>
+.bday-photo-overlay {
+  background:
+    linear-gradient(90deg, rgba(8,5,10,0.65) 0%, rgba(8,5,10,0.12) 38%, transparent 65%),
+    linear-gradient(0deg, rgba(8,5,10,0.3) 0%, transparent 45%);
+}
 
-      <!-- 3. Проф Терминал — MacBook горизонтальный -->
-      <article class="soft-card reveal">
-        <div class="soft-photo-wrap">
-          <div class="device device--macbook device--dark">
-            <div class="device-top-bar">
-              <div class="device-camera"></div>
-            </div>
-            <div class="soft-photo device-screen">
-              <img src="img/software/terminal.png" alt="Профессиональный терминал контроля рисков">
-            </div>
-            <div class="device-bottom-bar">
-              <div class="device-hinge"></div>
-              <div class="device-foot"></div>
-            </div>
-          </div>
-        </div>
-        <div class="soft-content">
-          <div class="soft-num">03 — Проф Терминал</div>
-          <h3 class="soft-title">Не даст <em>слить депозит</em></h3>
-          <p class="soft-desc">Отслеживает ваше психологическое состояние, контролирует риски и даёт сигналы. Защита от эмоциональных решений.</p>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
+/* ============================================================
+   DEVICE MOCKUPS — ambient glow под экраном
+   ============================================================ */
+.soft-photo-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: -16px;
+  left: 10%; right: 10%;
+  height: 70px;
+  background: radial-gradient(
+    ellipse 65% 40% at 50% 100%,
+    rgba(80,110,200,0.15),
+    transparent 70%
+  );
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: -1;
+}
 
-<!-- ============================== КОМУ КОМБО ============================== -->
-<section class="section who">
-  <div class="container who-grid">
-    <div class="reveal">
-      <span class="eyebrow">Для кого</span>
-      <h2>Кому стоит<br>приобрести<br><em>КОМБО?</em></h2>
-      <ul class="bullets" style="margin-top: 36px;">
-        <li><span class="bullet-dot"></span><span>Если вы верите в крипту <b>и хотите увеличить депозит</b></span></li>
-        <li><span class="bullet-dot"></span><span>Если у вас <b>нет финансовых проблем</b></span></li>
-        <li><span class="bullet-dot"></span><span><b>Хотите получить финансирование и работать в команде</b></span></li>
-        <li><span class="bullet-dot"></span><span>Вы начинающий — <b>и хотите освоить стратегию</b></span></li>
-        <li><span class="bullet-dot"></span><span>Сливаете депозит, <b>хотите восстановить</b></span></li>
-        <li><span class="bullet-dot"></span><span>Осознаёте все риски, <b>контролируете свои эмоции</b></span></li>
-        <li><span class="bullet-dot"></span><span>У вас есть <b>основной источник дохода</b></span></li>
-        <li><span class="bullet-dot"></span><span><b>Вы классный человек</b></span></li>
-      </ul>
-    </div>
-
-    <div class="who-visual reveal">
-      <div class="combo-showcase">
-
-        <div class="combo-card combo-card--ai">
-          <div class="combo-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-              <path d="M12 2L3 7l9 5 9-5-9-5z"/>
-              <path d="M3 12l9 5 9-5"/>
-              <path d="M3 17l9 5 9-5"/>
-            </svg>
-          </div>
-          <div class="combo-card-body">
-            <span class="combo-card-num">01</span>
-            <strong>ИИ-оракул</strong>
-            <span>Волны Эллиота · прогноз цены</span>
-          </div>
-          <div class="combo-card-dot combo-card-dot--live"></div>
-        </div>
-
-        <div class="combo-card combo-card--wb combo-card--featured">
-          <div class="combo-card-accent-line"></div>
-          <div class="combo-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-              <circle cx="12" cy="12" r="9"/>
-              <path d="M12 6v6l4 2"/>
-            </svg>
-          </div>
-          <div class="combo-card-body">
-            <span class="combo-card-num">02</span>
-            <strong>WhenBuy Bot</strong>
-            <span>Сигналы входа и выхода</span>
-          </div>
-          <div class="combo-card-stat">
-            <span class="combo-stat-val">260<sup>$</sup></span>
-            <span class="combo-stat-lbl">в год — бесплатно</span>
-          </div>
-        </div>
-
-        <div class="combo-card combo-card--edu">
-          <div class="combo-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-              <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-            </svg>
-          </div>
-          <div class="combo-card-body">
-            <span class="combo-card-num">03</span>
-            <strong>15 глав обучения</strong>
-            <span>Платформа + Проф Терминал</span>
-          </div>
-        </div>
-
-        <div class="combo-total">
-          <span class="combo-total-label">Всё вместе стоит</span>
-          <span class="combo-total-val">13 260<sup>$</sup></span>
-          <span class="combo-total-sub">— вы платите 890$</span>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================== SAVINGS ============================== -->
-<section class="section savings">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">Экономия</span>
-      <h2 class="section-title">Вы экономите <strong>до 13&thinsp;000$</strong><br>на наших подписках</h2>
-    </div>
-
-    <div class="savings-grid">
-      <div class="save-card reveal">
-        <div class="save-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L3 7l9 5 9-5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></svg>
-        </div>
-        <h3>Подписка на нейронку</h3>
-        <p>Прогнозирование рынка на базе ИИ. Идёт в подписку бесплатно.</p>
-        <div class="cost">Стоимость <span class="text-gold">12&thinsp;000$</span> на <a target="_blank" rel="noopener" href="https://chart.cryptocentral.asia/login?next=%2F">оригинальном сайте</a></div>
-      </div>
-
-      <div class="save-card reveal">
-        <div class="save-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
-        </div>
-        <h3>Подписка на бота</h3>
-        <p>Индикатор WhenBuy с сигналами входа и выхода в реальном времени.</p>
-        <div class="cost">Стоимость <span class="text-gold">260$</span> в год <br><a target="_blank" rel="noopener" href="https://whenbuy.ai/">whenbuy.ai</a></div>
-      </div>
-
-      <div class="save-card reveal">
-        <div class="save-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7l9-5 9 5v10l-9 5-9-5V7z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg>
-        </div>
-        <h3>Обучение от Муслима</h3>
-        <p>15 глав по трейдингу и инвестициям на закрытой платформе.</p>
-        <div class="cost">Стоимость <span class="text-gold">1000$</span> в год <br><a target="_blank" rel="noopener" href="http://edu.proproduction.kz/">платформа</a></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================== PRICING ============================== -->
-<section class="section pricing" id="price">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">Тарифы</span>
-      <h2 class="section-title">Выберите <em>тариф</em></h2>
-    </div>
-
-    <div class="pricing-grid">
-      <!-- Месячный -->
-      <article class="price-card sold reveal">
-        <h3 class="price-title">Месячный</h3>
-        <ul class="price-list">
-          <li>Телеграм-канал <b>с участниками</b></li>
-          <li>Подписка на копитрейд — <b>Муслима</b></li>
-          <li>Обучение от Муслима <b>всем видам анализа</b></li>
-          <li>Общая группа <b>в Telegram</b></li>
-          <li><b>Подписка на сделки</b> Муслима в телеграме</li>
-          <li><b>Созвоны с Муслимом</b> каждую неделю</li>
-        </ul>
-        <div class="price-cost sold-out">
-          <span class="new">Продано</span>
-        </div>
-        <div class="price-buy">
-          <a class="btn btn-ghost disabled" aria-disabled="true" href="buy/?price=1000000&tarif=Тариф - Премимум">Купить</a>
-          <a class="btn btn-ghost disabled" aria-disabled="true" href="">Внести бронь</a>
-        </div>
-      </article>
-
-      <!-- VIP годовой (FEATURED) -->
-      <article class="price-card featured reveal">
-        <h3 class="price-title">VIP годовой</h3>
-        <ul class="price-list">
-          <li>Телеграм-канал <b>с участниками</b></li>
-          <li>Подписка на копитрейд — <b>Муслима</b></li>
-          <li>Обучение от Муслима <b>всем видам анализа</b></li>
-          <li>Общая группа <b>в Telegram</b></li>
-          <li><b>Финансирование.</b> Куратор и созвоны</li>
-          <li><b>Созвоны с Муслимом</b> каждую неделю</li>
-          <li>Подписка на сделки Муслима на спот — <b>12 месяцев</b></li>
-          <li><b>Гарантия возврата</b> по договору</li>
-          <li><b>Гайды и инструкции</b></li>
-          <li><b>Индикатор WhenBuy бот</b></li>
-          <li><b>Пассивный доход с Bybit</b> через рекламу</li>
-        </ul>
-        <div class="price-cost">
-          <span class="old">1300$</span>
-          <span class="new">890<sup>$</sup></span>
-          <span class="rub">≈ 77 500 ₽</span>
-        </div>
-        <div class="price-buy">
-          <a id="b" href="buy/?price=990&tarif=Тариф - Стандарт" class="btn btn-gold">Купить</a>
-          <a id="br" href="buy/?price=2800&tarif=Тариф - Стандарт (Бронь)" class="btn btn-ghost">Внести бронь 26$</a>
-        </div>
-      </article>
-
-      <!-- Персональное (sold) -->
-      <article class="price-card sold reveal">
-        <h3 class="price-title gold">VIP персональное наставничество</h3>
-        <ul class="price-list">
-          <li>Телеграм-канал <b>с участниками</b></li>
-          <li>Подписка на WhenBuy бот — <b>12 месяцев</b></li>
-          <li>Еженедельные эфиры с Муслимом — <b>безлимит</b></li>
-          <li>Обучение для начинающих — <b>работа с биржей</b></li>
-          <li><b>Личный помощник</b> для начинающих</li>
-          <li>Подписка на нейронку Оракул — <b>12 месяцев</b></li>
-          <li>Подписка на сделки Муслима — <b>12 месяцев</b></li>
-          <li><b>Гайды и инструкции</b></li>
-          <li class="gold">Создание пассивного дохода как influencer</li>
-          <li class="gold">Партнёрство в IT-криптоиндустрии</li>
-          <li class="gold">Индивидуальные видеозвонки</li>
-        </ul>
-        <div class="price-cost sold-out">
-          <span class="new">Продано</span>
-        </div>
-        <div class="price-buy">
-          <a class="btn btn-ghost disabled" aria-disabled="true" href="buy/?price=1000000&tarif=Тариф - Премимум">Купить</a>
-          <a class="btn btn-ghost disabled" aria-disabled="true" href="">Внести бронь</a>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ============================== BIRTHDAY PROMO ============================== -->
-<section class="promo">
-  <div class="container">
-    <div class="promo-card reveal">
-
-      <!-- Текстовая часть слева -->
-      <div class="promo-text">
-        <span class="promo-tag">🎁 Акция · День рождения</span>
-        <h2>Скидка <em>в честь дня рождения</em></h2>
-        <p>Только до 3 июня — VIP годовой по специальной цене. После — возврат к обычной стоимости.</p>
-
-        <div class="promo-dates">
-          <div class="promo-date">
-            <div class="lbl">Акция до</div>
-            <div class="val">3 июня</div>
-          </div>
-          <div class="promo-date is-start">
-            <div class="lbl">Старт потока</div>
-            <div class="val">7 июня</div>
-          </div>
-        </div>
-
-        <div class="countdown" id="countdown" aria-label="Обратный отсчёт до окончания акции">
-          <div class="cd-unit"><span class="n" data-cd="days">—</span><span class="l">дней</span></div>
-          <div class="cd-unit"><span class="n" data-cd="hours">—</span><span class="l">часов</span></div>
-          <div class="cd-unit"><span class="n" data-cd="mins">—</span><span class="l">минут</span></div>
-          <div class="cd-unit"><span class="n" data-cd="secs">—</span><span class="l">секунд</span></div>
-        </div>
-
-        <div style="margin-top: 32px;">
-          <a href="#price" class="btn btn-primary">Забрать со скидкой</a>
-        </div>
-      </div>
-
-      <!-- Фото + цена — правая половина -->
-      <div class="promo-price-wrap">
-        <div class="bday-photo">
-          <div class="bday-photo-frame">
-            <img src="img/muslim-bday.png" alt="Муслим — день рождения">
-            <div class="bday-photo-overlay">
-              <div class="bday-glow"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="promo-price">
-          <span class="old">1000$</span>
-          <span class="arrow">↓</span>
-          <span class="new">890<sup>$</sup></span>
-          <span class="save">Экономия 110$</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ============================== GUARANTEE ============================== -->
-<section class="guarantee">
-  <div class="container">
-    <div class="reveal">
-      <div class="guarantee-shield">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-          <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/>
-          <path d="M8 12l3 3 5-6"/>
-        </svg>
-      </div>
-      <h2>Гарантия возврата <em>в течение 14 дней</em> от старта для годовых тарифов</h2>
-      <div class="kaspi-note">
-        Для пользователей <b>KASPI</b> доступна рассрочка 24 месяца · комиссия +14%
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================== START / CTA ============================== -->
-<section class="start">
-  <div class="container start-grid">
-    <div class="reveal">
-      <span class="eyebrow">Старт потока</span>
-      <h2>СТАРТ<em>07 Июня</em></h2>
-      <p>Напишите в директ Instagram — отвечу на вопросы по подписке, форматам оплаты и наполнению.</p>
-
-      <a href="https://www.instagram.com/mus_money_/" target="_blank" rel="noopener" class="start-ig">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="3" width="18" height="18" rx="5"/>
-          <circle cx="12" cy="12" r="4"/>
-          <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
-        </svg>
-        @mus_money_
-      </a>
-      <div class="start-hint">↑ жмите выше</div>
-    </div>
-
-    <div class="start-photo reveal">
-      <img src="img/muslim-pose.jpg" alt="Муслим Абдуллаев">
-    </div>
-  </div>
-</section>
-
-<!-- ============================== FOOTER ============================== -->
-<footer class="footer">
-  <div class="container footer-grid">
-    <p>
-      ИП «Adcreat»<br>
-      Адрес регистрации: г. Алматы, Курмангазы 107, кв. 19
-    </p>
-    <div class="footer-links">
-      <a href="">Договор оферты</a>
-      <a href="">Политика конфиденциальности</a>
-    </div>
-  </div>
-</footer>
-
-<script src="js/main.js"></script>
-<script>
-/* ===== LIGHTBOX ===== */
-(function(){
-  const lb = document.getElementById('lightbox');
-  const lbImg = document.getElementById('lightboxImg');
-  const lbClose = document.getElementById('lightboxClose');
-
-  document.querySelectorAll('[data-lightbox]').forEach(item => {
-    item.style.cursor = 'zoom-in';
-    item.addEventListener('click', () => {
-      const img = item.querySelector('img');
-      if (!img) return;
-      lbImg.src = img.src;
-      lbImg.alt = img.alt;
-      lb.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    });
-  });
-
-  function closeLb() {
-    lb.classList.remove('active');
-    document.body.style.overflow = '';
+/* ============================================================
+   MOBILE
+   ============================================================ */
+@media (max-width: 980px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 120px;
+    padding-bottom: 60px;
   }
+  .hero-author--corner { display: none; }
+  .hero--fullbleed .hfb-trophy  { bottom: 46%; right: 3%; left: auto; }
+  .hero--fullbleed .hfb-jp      { bottom: 28%; left: 48%; right: auto; }
+  .hero--fullbleed .hfb-members { bottom: 12%; right: 3%; left: auto; }
+}
 
-  lbClose.addEventListener('click', closeLb);
-  lb.querySelector('.lightbox-backdrop').addEventListener('click', closeLb);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
-})();
-</script>
+@media (max-width: 520px) {
+  .hero--fullbleed .hero-float-badge { display: none; }
+}
 
-<script>
-/* ===== GALLERY SLIDER ===== */
-(function(){
-  const track   = document.getElementById('gsTrack');
-  const dotsWrap= document.getElementById('gsDots');
-  const btnPrev = document.getElementById('gsPrev');
-  const btnNext = document.getElementById('gsNext');
-  if (!track) return;
+/* ============================================================
+   GALLERY SLIDER — секция между hero и отзывами
+   ============================================================ */
+.gallery-slider {
+  padding: 100px 0 60px;
+  position: relative;
+  overflow: hidden;
+}
+.gallery-slider .section-head {
+  margin-bottom: 48px;
+}
 
-  const slides  = Array.from(track.querySelectorAll('.gs-slide'));
-  const VISIBLE = () => window.innerWidth < 700 ? 1 : window.innerWidth < 1024 ? 2 : 3;
-  let current   = 0;
-  let autoTimer = null;
+/* Вьюпорт — обрезает вылезающие слайды */
+.gs-viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 12px 0 16px;
+}
 
-  function buildDots() {
-    dotsWrap.innerHTML = '';
-    const total = Math.max(1, slides.length - VISIBLE() + 1);
-    for (let i = 0; i < total; i++) {
-      const d = document.createElement('button');
-      d.className = 'gs-dot';
-      d.setAttribute('aria-label', 'Слайд ' + (i+1));
-      d.addEventListener('click', () => goTo(i));
-      dotsWrap.appendChild(d);
-    }
-  }
+/* Трек — горизонтальная лента слайдов */
+.gs-track {
+  display: flex;
+  gap: 20px;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  padding: 0 40px;
+}
 
-  function updateDots() {
-    dotsWrap.querySelectorAll('.gs-dot').forEach((d,i) => d.classList.toggle('active', i === current));
-  }
+/* Один слайд */
+.gs-slide {
+  flex: 0 0 calc(33.333% - 54px);
+  aspect-ratio: 4 / 3;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--bg-elevated);
+  border: 1px solid var(--line-soft);
+  position: relative;
+  transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out), border-color 0.4s;
+}
+.gs-slide:hover {
+  transform: scale(1.025) translateY(-4px);
+  box-shadow: 0 24px 48px -12px rgba(0,0,0,0.7), 0 0 0 1px var(--line-strong);
+  border-color: var(--line);
+}
+.gs-slide img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s var(--ease-out);
+}
+.gs-slide:hover img {
+  transform: scale(1.05);
+}
 
-  function goTo(idx) {
-    const max = Math.max(0, slides.length - VISIBLE());
-    current = Math.max(0, Math.min(idx, max));
-    const slideW = slides[0].offsetWidth + 20;
-    track.style.transform = 'translateX(-' + (current * slideW) + 'px)';
-    updateDots();
-  }
+/* Кнопки влево/вправо */
+.gs-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--bronze), var(--bronze-deep));
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  z-index: 10;
+  box-shadow:
+    0 8px 24px -6px rgba(184,136,79,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), background 0.3s;
+}
+.gs-btn:hover {
+  background: linear-gradient(135deg, var(--bronze-glow), var(--bronze));
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 14px 32px -8px rgba(212,160,94,0.65);
+}
+.gs-btn:active { transform: translateY(-50%) scale(0.96); }
+.gs-btn--prev { left: 8px; }
+.gs-btn--next { right: 8px; }
 
-  function next() { goTo(current + 1); }
-  function prev() { goTo(current - 1); }
+/* Fade-маски по краям — плавное исчезание */
+.gs-fade {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 80px;
+  pointer-events: none;
+  z-index: 5;
+}
+.gs-fade--left {
+  left: 0;
+  background: linear-gradient(90deg, var(--bg-deep), transparent);
+}
+.gs-fade--right {
+  right: 0;
+  background: linear-gradient(270deg, var(--bg-deep), transparent);
+}
 
-  function startAuto() {
-    stopAuto();
-    autoTimer = setInterval(function() {
-      const max = Math.max(0, slides.length - VISIBLE());
-      goTo(current >= max ? 0 : current + 1);
-    }, 4000);
-  }
-  function stopAuto() { clearInterval(autoTimer); }
+/* Точки-индикаторы */
+.gs-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 28px;
+}
+.gs-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--line-strong);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.3s, transform 0.3s, width 0.3s;
+}
+.gs-dot.active {
+  background: var(--gold);
+  width: 24px;
+  border-radius: 4px;
+  transform: none;
+}
 
-  btnNext.addEventListener('click', function() { next(); startAuto(); });
-  btnPrev.addEventListener('click', function() { prev(); startAuto(); });
-
-  let touchX = 0;
-  track.addEventListener('touchstart', function(e) { touchX = e.touches[0].clientX; stopAuto(); }, {passive:true});
-  track.addEventListener('touchend',   function(e) {
-    const dx = e.changedTouches[0].clientX - touchX;
-    if (Math.abs(dx) > 40) { if (dx < 0) next(); else prev(); }
-    startAuto();
-  });
-
-  buildDots(); goTo(0); startAuto();
-  window.addEventListener('resize', function() { buildDots(); goTo(0); });
-})();
-</script>
-</body>
-</html>
+/* Responsive */
+@media (max-width: 1024px) {
+  .gs-slide { flex: 0 0 calc(50% - 30px); }
+}
+@media (max-width: 700px) {
+  .gs-slide { flex: 0 0 calc(100% - 80px); }
+  .gallery-slider { padding: 60px 0 40px; }
+}
