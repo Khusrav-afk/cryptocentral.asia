@@ -39,12 +39,12 @@
 }
 
 /* ============================================================
-   FIX 3 — Фото чуть меньше: сдвигаем человека вниз
-   Больше пространства над головой → кнопка не упирается
+   FIX 3 — Фото: голова значительно ниже от кнопки навигации
+   Увеличиваем вертикальное смещение с 35% до 55%
    ============================================================ */
 .hero-bg img {
-  /* Сдвигаем человека ниже в кадре — голова отходит от кнопки */
-  object-position: 60% 35%;
+  /* 55% вертикально — человек опускается вниз, голова уходит от кнопки */
+  object-position: 60% 55%;
 }
 
 /* ============================================================
@@ -201,14 +201,15 @@
   animation-delay: 0s;
 }
 
-/* JP Morgan Chase — СПРАВА ОТ ТЕЛА, середина по высоте
-   Стрелка на скриншоте указывает примерно на уровень локтя/пояса */
+/* JP Morgan Chase — левее, на уровне груди/живота
+   Стрелка указывает примерно на середину тела по горизонтали */
 .hero--fullbleed .hfb-jp {
   display: flex;
   top: auto;
-  bottom: 34%;
-  right: 3%;
-  left: auto;
+  bottom: 36%;
+  /* Сдвигаем левее — к середине фото, где стрелка */
+  right: auto;
+  left: 52%;
   animation-delay: 1.2s;
 }
 
@@ -346,9 +347,9 @@
     padding-bottom: 60px;
   }
   .hero-author--corner { display: none; }
-  .hero--fullbleed .hfb-trophy  { bottom: 46%; right: 3%; }
-  .hero--fullbleed .hfb-jp      { bottom: 28%; right: 3%; }
-  .hero--fullbleed .hfb-members { bottom: 12%; right: 3%; }
+  .hero--fullbleed .hfb-trophy  { bottom: 46%; right: 3%; left: auto; }
+  .hero--fullbleed .hfb-jp      { bottom: 28%; left: 48%; right: auto; }
+  .hero--fullbleed .hfb-members { bottom: 12%; right: 3%; left: auto; }
 }
 
 @media (max-width: 520px) {
