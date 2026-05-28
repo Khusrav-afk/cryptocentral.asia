@@ -76,16 +76,8 @@
       </div>
     </div>
 
-    <!-- ======= HERO PHOTO ======= -->
+    <!-- ======= HERO PHOTO — без рамок, кинематографический ======= -->
     <div class="hero-photo-col reveal">
-      <!-- Декоративные линии -->
-      <div class="hero-deco-line hero-deco-line--v"></div>
-      <div class="hero-deco-line hero-deco-line--h"></div>
-
-      <!-- Угловые орнаменты -->
-      <div class="hero-corner hero-corner--tl"></div>
-      <div class="hero-corner hero-corner--br"></div>
-
       <!-- Обёртка фото -->
       <div class="hero-photo-wrapper">
         <!-- Свечение позади -->
@@ -105,9 +97,6 @@
             </ul>
           </div>
         </div>
-
-        <!-- Диагональная полоска -->
-        <div class="hero-slash"></div>
       </div>
 
       <!-- Floating badge — трофей -->
@@ -305,7 +294,6 @@
       </ul>
     </div>
 
-    <!-- ПРАВКА 4: вместо слова КОМБО — showcase карточек -->
     <div class="who-visual reveal">
       <div class="combo-showcase">
 
@@ -497,17 +485,7 @@
   <div class="container">
     <div class="promo-card reveal">
 
-      <canvas id="confettiCanvas" class="confetti-canvas" aria-hidden="true"></canvas>
-
-      <div class="bday-deco bday-deco--stars" aria-hidden="true">
-        <span>✦</span><span>✦</span><span>✦</span>
-      </div>
-      <div class="bday-balloons" aria-hidden="true">
-        <div class="balloon b-1">🎈</div>
-        <div class="balloon b-2">🎉</div>
-        <div class="balloon b-3">🎈</div>
-      </div>
-
+      <!-- Текстовая часть слева -->
       <div class="promo-text">
         <span class="promo-tag">🎁 Акция · День рождения</span>
         <h2>Скидка <em>в честь дня рождения</em></h2>
@@ -536,17 +514,14 @@
         </div>
       </div>
 
+      <!-- Фото + цена — правая половина -->
       <div class="promo-price-wrap">
         <div class="bday-photo">
           <div class="bday-photo-frame">
-            <!-- ПРАВКА 3: jpg → png -->
             <img src="img/muslim-bday.png" alt="Муслим — день рождения">
             <div class="bday-photo-overlay">
               <div class="bday-glow"></div>
             </div>
-            <div class="bday-sticker bday-sticker--cake">🎂</div>
-            <div class="bday-sticker bday-sticker--confetti">🎊</div>
-            <div class="bday-ribbon">С Днём Рождения!</div>
           </div>
         </div>
 
@@ -647,74 +622,6 @@
   lbClose.addEventListener('click', closeLb);
   lb.querySelector('.lightbox-backdrop').addEventListener('click', closeLb);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
-})();
-
-/* ===== CONFETTI ===== */
-(function(){
-  const canvas = document.getElementById('confettiCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const colors = ['#d4af6a','#b8884f','#8a1a2a','#f3ece2','#d12338','#fff8e7'];
-  let particles = [];
-  let animId;
-
-  function resize() {
-    const card = canvas.parentElement;
-    canvas.width = card.offsetWidth;
-    canvas.height = card.offsetHeight;
-  }
-
-  function spawn() {
-    particles = [];
-    for (let i = 0; i < 90; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height * -1 - 20,
-        vx: (Math.random() - 0.5) * 1.2,
-        vy: Math.random() * 2 + 1,
-        rot: Math.random() * 360,
-        rotV: (Math.random() - 0.5) * 4,
-        w: Math.random() * 8 + 4,
-        h: Math.random() * 4 + 2,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.6 + 0.4
-      });
-    }
-  }
-
-  function tick() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.rot += p.rotV;
-      if (p.y > canvas.height + 10) {
-        p.y = -20;
-        p.x = Math.random() * canvas.width;
-      }
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot * Math.PI / 180);
-      ctx.globalAlpha = p.alpha;
-      ctx.fillStyle = p.color;
-      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
-      ctx.restore();
-    });
-    animId = requestAnimationFrame(tick);
-  }
-
-  const promoSection = document.querySelector('.promo');
-  const observer = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) {
-      resize();
-      spawn();
-      tick();
-    } else {
-      cancelAnimationFrame(animId);
-    }
-  }, { threshold: 0.2 });
-  if (promoSection) observer.observe(promoSection);
-  window.addEventListener('resize', () => { resize(); spawn(); });
 })();
 </script>
 </body>
