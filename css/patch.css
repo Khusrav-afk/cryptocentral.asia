@@ -409,3 +409,257 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
+
+/* ============================================================
+   HERO v3 — FULL-BLEED CINEMATIC
+   Фото на весь экран, текст поверх с gradient overlay
+   ============================================================ */
+
+/* Nav: убрали brand — CTA выравниваем вправо */
+.nav-row--solo {
+  justify-content: flex-end;
+}
+
+/* Hero — полноэкранный контейнер */
+.hero--fullbleed {
+  position: relative;
+  min-height: 100vh;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Отменяем старый grid-layout */
+.hero--fullbleed .hero-grid,
+.hero--fullbleed .hero-photo-col,
+.hero--fullbleed .hero-photo-wrapper,
+.hero--fullbleed .hero-photo-glow {
+  display: none !important;
+}
+
+/* Фоновое фото — на весь блок */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 18%;
+  display: block;
+  filter: contrast(1.06) saturate(1.1) brightness(0.88);
+}
+
+/* Многослойный overlay:
+   — слева: глубокий тёмный градиент для читаемости текста
+   — снизу: мягкий fade в цвет фона сайта (seamless переход)
+   — справа: лёгкое виньетирование
+*/
+.hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    /* Левая половина — основной overlay для текста */
+    linear-gradient(
+      105deg,
+      rgba(8,5,10,0.92) 0%,
+      rgba(8,5,10,0.78) 28%,
+      rgba(8,5,10,0.45) 52%,
+      rgba(8,5,10,0.12) 72%,
+      transparent 88%
+    ),
+    /* Снизу — плавный переход в фон сайта */
+    linear-gradient(
+      0deg,
+      rgba(8,5,10,1)    0%,
+      rgba(8,5,10,0.65) 12%,
+      transparent       35%
+    ),
+    /* Сверху — лёгкое затемнение для навигации */
+    linear-gradient(
+      180deg,
+      rgba(8,5,10,0.55) 0%,
+      transparent       18%
+    ),
+    /* Правая виньетка */
+    radial-gradient(
+      ellipse 60% 100% at 100% 50%,
+      rgba(8,5,10,0.3),
+      transparent 70%
+    ),
+    /* Тёплое винное свечение снизу-слева — brand color */
+    radial-gradient(
+      ellipse 50% 35% at 15% 100%,
+      rgba(138,26,42,0.5),
+      transparent 65%
+    );
+}
+
+/* Контент поверх — flex, текст слева, автор справа-снизу */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: flex-end;
+  padding-bottom: 80px;
+  padding-top: 160px;
+  gap: 40px;
+}
+
+/* Текстовый блок — левая колонка */
+.hero--fullbleed .hero-text {
+  max-width: 600px;
+}
+
+/* Подпись автора — правый нижний угол */
+.hero-author--corner {
+  text-align: right;
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
+.hero-author--corner .name {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 26px;
+  color: rgba(243,236,226,0.8);
+  letter-spacing: -0.01em;
+  margin-bottom: 14px;
+}
+.hero-author--corner ul {
+  list-style: none;
+  padding: 0; margin: 0;
+}
+.hero-author--corner li {
+  position: relative;
+  padding-right: 14px;
+  font-size: 13px;
+  color: rgba(243,236,226,0.5);
+  line-height: 1.5;
+}
+.hero-author--corner li + li { margin-top: 7px; }
+.hero-author--corner li span { color: rgba(212,175,106,0.8); }
+.hero-author--corner li::before {
+  content: '';
+  position: absolute;
+  right: 0; top: 8px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(212,175,106,0.4);
+}
+
+/* Floating badges — теперь относительно hero, не photo-col */
+.hero--fullbleed .hfb-trophy  { top: 22%;  right: 6%; }
+.hero--fullbleed .hfb-members { bottom: 28%; right: 3%; }
+.hero--fullbleed .hfb-jp      { top: 42%;  right: 28%; }
+
+/* Плавный переход hero → следующая секция */
+.hero--fullbleed::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(0deg, var(--bg-deep) 0%, transparent 100%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* ---- Mobile ---- */
+@media (max-width: 980px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    padding-bottom: 60px;
+    padding-top: 130px;
+    gap: 40px;
+  }
+  .hero-author--corner {
+    text-align: left;
+    display: none; /* на мобиле убираем — текста и так много */
+  }
+  .hero-bg img {
+    object-position: 65% 18%;
+  }
+  .hero-bg-overlay {
+    background:
+      linear-gradient(0deg, rgba(8,5,10,1) 0%, rgba(8,5,10,0.7) 20%, rgba(8,5,10,0.4) 55%, transparent 100%),
+      linear-gradient(90deg, rgba(8,5,10,0.85) 0%, rgba(8,5,10,0.4) 60%, transparent 100%),
+      linear-gradient(180deg, rgba(8,5,10,0.5) 0%, transparent 20%);
+  }
+  .hero--fullbleed .hfb-trophy  { top: 14%; right: 4%; }
+  .hero--fullbleed .hfb-members { display: none; }
+  .hero--fullbleed .hfb-jp      { display: none; }
+}
+
+@media (max-width: 520px) {
+  .hero--fullbleed .hfb-trophy { display: none; }
+}
+
+
+/* ============================================================
+   HERO — тюнинг под новое фото muslim-hero.png
+   Фото уже широкоформатное: человек справа ~60–70%,
+   тёмно-бордовый фон слева, тёплый amber справа
+   ============================================================ */
+
+/* Позиция: показываем человека в правой трети */
+.hero-bg img {
+  object-position: 68% center;
+  /* Фото уже тёмное — чуть меньше затемнять */
+  filter: contrast(1.04) saturate(1.06) brightness(0.95);
+}
+
+/*
+  Переписываем overlay под эту фотографию:
+  — Левая зона УЖЕ тёмная на фото → overlay может быть мягче
+  — Правая зона тоже уходит в темноту → виньетка лёгкая
+  — Главное: плавный переход снизу в фон сайта
+*/
+.hero-bg-overlay {
+  background:
+    /* Левая часть — тонкий допол. градиент для текста */
+    linear-gradient(
+      108deg,
+      rgba(8,5,10,0.82) 0%,
+      rgba(8,5,10,0.55) 30%,
+      rgba(8,5,10,0.18) 55%,
+      transparent 75%
+    ),
+    /* Снизу → в фон сайта (самое важное — seamless) */
+    linear-gradient(
+      0deg,
+      rgba(8,5,10,1)    0%,
+      rgba(8,5,10,0.7)  10%,
+      rgba(8,5,10,0.2)  28%,
+      transparent       48%
+    ),
+    /* Сверху — для навигации */
+    linear-gradient(
+      180deg,
+      rgba(8,5,10,0.45) 0%,
+      transparent       16%
+    ),
+    /* Правая виньетка — уходим в темноту */
+    linear-gradient(
+      270deg,
+      rgba(8,5,10,0.55) 0%,
+      rgba(8,5,10,0.2)  18%,
+      transparent       40%
+    ),
+    /* Тёплый amber-акцент слева — совпадает с тоном стены на фото */
+    radial-gradient(
+      ellipse 40% 55% at 2% 45%,
+      rgba(160,80,20,0.22),
+      transparent 70%
+    );
+}
+
+/* Подпись автора — чуть выше чтобы не перекрывалась градиентом */
+.hero-author--corner {
+  padding-bottom: 20px;
+}
