@@ -1,0 +1,394 @@
+/* ============================================================
+   PATCH v2 — три правки:
+   1. Promo: цена вынесена из тела фото
+   2. Devices: более реалистичные мокапы
+   3. Hero photo: бесшовное слияние с фоном
+   ============================================================ */
+
+/* ============================================================
+   FIX 3 — HERO PHOTO: бесшовное слияние с фоном сайта
+   Убираем рамку, border-radius и делаем mask-image fade
+   ============================================================ */
+.hero-photo {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  overflow: visible !important;
+  /* Маска: фото плавно растворяется по всем краям в фон */
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse 88% 82% at 54% 42%,
+      black 38%,
+      rgba(0,0,0,0.85) 52%,
+      rgba(0,0,0,0.4) 68%,
+      transparent 88%
+    );
+  mask-image:
+    radial-gradient(
+      ellipse 88% 82% at 54% 42%,
+      black 38%,
+      rgba(0,0,0,0.85) 52%,
+      rgba(0,0,0,0.4) 68%,
+      transparent 88%
+    );
+  isolation: isolate;
+}
+
+.hero-photo img {
+  filter: contrast(1.08) saturate(1.12) brightness(0.96);
+}
+
+/* Убираем внешнюю рамку-тень у обёртки */
+.hero-photo-wrapper {
+  overflow: visible !important;
+}
+
+/* Усиливаем glow снизу — теперь он «сшивает» фото с фоном */
+.hero-photo-glow {
+  bottom: -40px;
+  left: -20%;
+  right: -20%;
+  height: 380px;
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 100%,
+    rgba(138, 26, 42, 0.65),
+    rgba(8,5,10,0) 72%
+  );
+  filter: blur(60px);
+}
+
+/* Тёплый золотистый ambient слева — усиливаем */
+.hero-photo-wrapper::before {
+  left: -50px;
+  width: 180px;
+  height: 80%;
+  background: radial-gradient(
+    ellipse at left,
+    rgba(212,175,106,0.22),
+    transparent 75%
+  );
+  filter: blur(40px);
+}
+
+/* ============================================================
+   FIX 1 — PROMO: цена вынесена из фото, photo остаётся чистым
+   ============================================================ */
+
+/* Перестраиваем promo-card: левая колонка шире */
+.promo-card {
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: stretch;
+}
+
+/* Цена теперь В левой колонке (promo-text), не в promo-price-wrap */
+.promo-price {
+  position: static !important;
+  z-index: auto !important;
+  text-align: left !important;
+  padding: 0 !important;
+  width: auto !important;
+  margin-top: 28px;
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.promo-price .old {
+  font-size: 20px !important;
+  display: inline !important;
+  margin-bottom: 0 !important;
+}
+
+.promo-price .arrow {
+  display: inline !important;
+  font-size: 20px !important;
+  margin-bottom: 0 !important;
+  color: var(--gold-soft);
+}
+
+.promo-price .new {
+  font-size: clamp(48px, 6vw, 80px) !important;
+  line-height: 0.9 !important;
+  filter: none !important;
+}
+
+.promo-price .save {
+  display: inline-flex !important;
+  margin-top: 0 !important;
+  align-self: flex-end;
+  margin-bottom: 8px;
+}
+
+/* Правая половина (фото) — полностью чистая, без ценника */
+.promo-price-wrap {
+  min-height: 480px;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Фото в правой колонке — атмосферный fade слева */
+.bday-photo-overlay {
+  background:
+    linear-gradient(90deg, rgba(8,5,10,0.7) 0%, rgba(8,5,10,0.15) 40%, rgba(8,5,10,0.05) 75%, transparent 100%),
+    linear-gradient(0deg, rgba(8,5,10,0.35) 0%, transparent 50%);
+}
+
+/* ============================================================
+   FIX 2 — DEVICE MOCKUPS: фотореалистичные экраны
+   ============================================================ */
+
+/* ---- MacBook: усиленные детали ---- */
+.device--macbook {
+  filter:
+    drop-shadow(0 1px 1px rgba(0,0,0,0.55))
+    drop-shadow(0 8px 16px rgba(0,0,0,0.65))
+    drop-shadow(0 30px 60px rgba(0,0,0,0.55))
+    drop-shadow(0 60px 100px rgba(0,0,0,0.3));
+}
+
+.device--macbook .device-top-bar {
+  height: 34px;
+  background: linear-gradient(180deg,
+    #5a5a68 0%,
+    #484852 20%,
+    #3c3c48 50%,
+    #323240 75%,
+    #2a2a38 100%
+  );
+  border-radius: 12px 12px 0 0;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.22),
+    inset 0 -1px 0 rgba(0,0,0,0.4),
+    inset 1px 0 0 rgba(255,255,255,0.06),
+    inset -1px 0 0 rgba(255,255,255,0.06);
+}
+
+/* Нотч с подсветкой под камерой */
+.device--macbook .device-camera {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #2e2e34, #08080c);
+  box-shadow:
+    0 0 0 1.5px rgba(0,0,0,0.9),
+    0 0 0 3px rgba(255,255,255,0.03),
+    inset 0 1px 2px rgba(80,200,255,0.2),
+    0 0 8px rgba(80,200,255,0.08);
+}
+
+.device--macbook .device-screen {
+  border-left: 18px solid #2a2a38;
+  border-right: 18px solid #2a2a38;
+  border-bottom: 14px solid #2a2a38;
+  background: #070710;
+  /* Внутренняя тень экрана: ощущение глубины */
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,0.9),
+    inset 0 2px 12px rgba(0,0,0,0.7),
+    inset 0 0 40px rgba(0,0,0,0.5);
+}
+
+/* Многослойный блик на стекле экрана */
+.device--macbook .device-screen::before {
+  background:
+    /* диагональный блик линзы */
+    linear-gradient(
+      130deg,
+      rgba(255,255,255,0.07) 0%,
+      rgba(255,255,255,0.03) 18%,
+      transparent 35%
+    ),
+    /* тонкий блик по верхнему краю экрана */
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.05) 0%,
+      transparent 4%
+    );
+}
+
+.device--macbook .device-hinge {
+  height: 12px;
+  background: linear-gradient(180deg, #282836 0%, #1e1e2a 50%, #161620 100%);
+  border-left: 18px solid #2a2a38;
+  border-right: 18px solid #2a2a38;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.06),
+    inset 0 -2px 4px rgba(0,0,0,0.5);
+}
+
+.device--macbook .device-foot {
+  width: 48%;
+  height: 14px;
+  background: linear-gradient(180deg,
+    #2c2c3c 0%,
+    #242432 40%,
+    #1a1a26 80%,
+    #141420 100%
+  );
+  border-radius: 0 0 12px 12px;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.7),
+    0 2px 4px rgba(0,0,0,0.5),
+    inset 0 -2px 0 rgba(0,0,0,0.5);
+}
+
+/* Блик по передней грани основания */
+.device--macbook .device-foot::before {
+  left: 12%; right: 12%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.14),
+    transparent
+  );
+}
+
+/* Прорезиновые ножки — чуть заметнее */
+.device--macbook .device-foot::after {
+  bottom: 3px;
+  left: 10%; right: 10%;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(0,0,0,0.65);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+/* Hover — эффект 3D подъёма */
+.soft-card:hover .device--macbook {
+  transform: translateY(-10px) perspective(1200px) rotateX(2deg) rotateY(-1deg);
+}
+
+/* ---- Тёмный MacBook ---- */
+.device--dark .device-top-bar {
+  background: linear-gradient(180deg, #222230 0%, #18181e 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.5);
+}
+.device--dark .device-screen {
+  border-color: #14141c;
+  background: #04040a;
+}
+.device--dark .device-hinge {
+  background: linear-gradient(180deg, #161620, #0e0e16);
+  border-color: #14141c;
+}
+.device--dark .device-foot {
+  background: linear-gradient(180deg, #1a1a22, #0e0e14);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+
+/* ---- Monitor: фотореалистичная панель ---- */
+.device--monitor {
+  filter:
+    drop-shadow(0 2px 2px rgba(0,0,0,0.6))
+    drop-shadow(0 12px 24px rgba(0,0,0,0.7))
+    drop-shadow(0 40px 80px rgba(0,0,0,0.5))
+    drop-shadow(0 80px 120px rgba(0,0,0,0.3));
+}
+
+.device--monitor .device-screen {
+  border: 16px solid #181824;
+  border-bottom-width: 36px;
+  border-radius: 12px 12px 6px 6px;
+  background: #06060e;
+  box-shadow:
+    /* внешняя рамка — металл */
+    0 0 0 1px rgba(255,255,255,0.07),
+    0 0 0 2px rgba(0,0,0,0.8),
+    /* внутреннее свечение экрана */
+    inset 0 0 0 1px rgba(0,0,0,0.9),
+    inset 0 2px 16px rgba(0,0,0,0.8);
+}
+
+/* Логотип/статус-светодиод */
+.device--monitor .device-screen::before {
+  bottom: -27px;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle at 40% 40%, #3ddb8a, #1a9e5a);
+  box-shadow:
+    0 0 4px rgba(26,158,90,0.9),
+    0 0 12px rgba(26,158,90,0.4);
+}
+
+/* Стекло на мониторе */
+.device--monitor .device-screen::after {
+  background:
+    linear-gradient(
+      140deg,
+      rgba(255,255,255,0.055) 0%,
+      rgba(255,255,255,0.02) 22%,
+      transparent 40%
+    );
+}
+
+.device--monitor .device-monitor-neck {
+  width: 16px;
+  height: 38px;
+  background: linear-gradient(
+    180deg,
+    #1c1c28 0%,
+    #161620 50%,
+    #121218 100%
+  );
+  box-shadow:
+    -2px 0 0 rgba(255,255,255,0.04),
+    2px 0 0 rgba(0,0,0,0.5);
+}
+
+.device--monitor .device-monitor-base {
+  width: 44%;
+  height: 14px;
+  background: linear-gradient(
+    180deg,
+    #1e1e2c 0%,
+    #161620 50%,
+    #0e0e14 100%
+  );
+  border-radius: 3px 3px 10px 10px;
+  box-shadow:
+    0 6px 16px rgba(0,0,0,0.65),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.5);
+  position: relative;
+}
+/* Блик на основании монитора */
+.device--monitor .device-monitor-base::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.1),
+    transparent
+  );
+}
+
+/* Hover монитора */
+.soft-card:hover .device--monitor {
+  transform: translateY(-10px) perspective(1400px) rotateX(1.5deg);
+}
+
+/* Экран светится — ambient glow за устройством */
+.soft-photo-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 10%;
+  right: 10%;
+  height: 80px;
+  background: radial-gradient(
+    ellipse 70% 40% at 50% 100%,
+    rgba(80,120,200,0.18),
+    transparent 70%
+  );
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: -1;
+}
+
