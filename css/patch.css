@@ -201,22 +201,20 @@
   animation-delay: 0s;
 }
 
-/* JP Morgan Chase — левее, на уровне груди/живота
-   Стрелка указывает примерно на середину тела по горизонтали */
+/* JP Morgan Chase — касается груди, чуть правее центра */
 .hero--fullbleed .hfb-jp {
   display: flex;
   top: auto;
   bottom: 36%;
-  /* Сдвигаем левее — к середине фото, где стрелка */
   right: auto;
-  left: 52%;
+  left: 60%;
   animation-delay: 1.2s;
 }
 
-/* 250+ участников — правый низ */
+/* 250+ участников — поднимаем выше, не перекрывает подпись автора */
 .hero--fullbleed .hfb-members {
   top: auto;
-  bottom: 16%;
+  bottom: 24%;
   right: 3%;
   left: auto;
   display: flex;
