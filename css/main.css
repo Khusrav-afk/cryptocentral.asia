@@ -73,7 +73,6 @@ body::before{
     radial-gradient(800px 800px at 50% 110%, rgba(138, 26, 42, 0.25), transparent 65%);
 }
 body::after{
-  /* SVG-шум */
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.85 0 0 0 0 0.7 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   opacity: 0.06;
   mix-blend-mode: overlay;
@@ -360,7 +359,38 @@ em, .italic{
 }
 .hero-cta-row .meta b{ color: var(--gold); font-weight: 600; }
 
-/* Hero photo - same height as left column */
+/* ============================================================
+   HERO PHOTO — REDESIGNED
+   ============================================================ */
+
+/* Обёртка колонки */
+.hero-photo-col{
+  position: relative;
+  height: 100%;
+  min-height: 720px;
+}
+
+/* Декоративные линии */
+.hero-deco-line{
+  position: absolute;
+  background: var(--gold);
+  opacity: 0.12;
+  pointer-events: none;
+}
+.hero-deco-line--v{
+  width: 1px;
+  top: -20px;
+  bottom: -20px;
+  right: -24px;
+}
+.hero-deco-line--h{
+  height: 1px;
+  left: -20px;
+  right: -20px;
+  top: 50%;
+}
+
+/* Основное фото */
 .hero-photo{
   position: absolute;
   inset: 0;
@@ -387,17 +417,28 @@ em, .italic{
   object-fit: cover;
   object-position: center 30%;
   display: block;
-  filter: contrast(1.05) saturate(1.08);
+  filter: contrast(1.05) saturate(1.1);
+}
+/* Шайн-эффект поверх фото */
+.hero-photo-shine{
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(212,175,106,0.08) 0%, transparent 40%),
+    linear-gradient(0deg, rgba(8,5,10,0.25) 65%, transparent 100%),
+    linear-gradient(180deg, transparent 65%, rgba(8,5,10,0.55) 100%);
+  pointer-events: none;
+  z-index: 1;
 }
 .hero-photo::after{
   content: '';
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, transparent 65%, rgba(8,5,10,0.25) 85%, rgba(8,5,10,0.55) 100%),
     radial-gradient(ellipse 55% 35% at 80% 100%, rgba(8,5,10,0.5), transparent 70%);
   pointer-events: none;
 }
+
 .hero-author{
   position: absolute;
   right: 28px; bottom: 28px;
@@ -410,7 +451,7 @@ em, .italic{
   font-style: italic;
   font-weight: 400;
   font-size: 24px;
-  color: rgba(243, 236, 226, 0.6);
+  color: rgba(243, 236, 226, 0.7);
   letter-spacing: -0.01em;
   margin-bottom: 12px;
 }
@@ -437,26 +478,111 @@ em, .italic{
   height: 4px;
   border-radius: 50%;
   background: rgba(212, 175, 106, 0.4);
-  box-shadow: none;
 }
 .hero-author li + li{ margin-top: 6px; }
 .hero-author li span{ color: rgba(212, 175, 106, 0.75); }
 
-/* Restructure: hero-photo-col is just the photo wrapper for layout */
-.hero-photo-col{
-  position: relative;
-  height: 100%;
-  min-height: 720px;
+/* ============================================================
+   HERO FLOATING BADGES (справа от фото)
+   ============================================================ */
+.hero-float-badge{
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px 10px 12px;
+  background: rgba(17, 7, 9, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.07);
+  z-index: 5;
+  min-width: 160px;
+  animation: badgeFloat 6s ease-in-out infinite;
+  transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+}
+.hero-float-badge:hover{
+  transform: translateY(-3px) !important;
+  box-shadow: 0 16px 36px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+@keyframes badgeFloat{
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+
+.hfb-trophy { top: 12%;  right: -40px; animation-delay: 0s; }
+.hfb-members{ bottom: 32%; right: -50px; animation-delay: 1.5s; }
+.hfb-guarantee{ bottom: 14%; left: -50px; animation-delay: 0.8s; }
+.hfb-jp     { top: 38%;  left: -40px; animation-delay: 2.2s; }
+
+.hfb-icon{
+  font-size: 20px;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(212,175,106,0.15), rgba(138,26,42,0.15));
+  border-radius: 9px;
+  border: 1px solid var(--line);
+}
+.hfb-body{
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.hfb-body strong{
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.hfb-body span{
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  line-height: 1.3;
 }
 
 @media (max-width: 980px){
   .hero{ padding: 110px 0 60px; }
   .hero-grid{ grid-template-columns: 1fr; gap: 40px; }
-  .hero-photo{ position: relative; inset: auto; aspect-ratio: 3 / 4; height: auto; min-height: 0; max-width: 420px; margin: 0 auto; }
-  .hero-photo-col{ max-width: 420px; margin: 0 auto; width: 100%; height: auto; min-height: 0; }
+  .hero-photo{
+    position: relative; inset: auto;
+    aspect-ratio: 3 / 4; height: auto;
+    min-height: 0; max-width: 420px;
+    margin: 0 auto;
+  }
+  .hero-photo-col{
+    max-width: 420px;
+    margin: 0 auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+  }
   .hero-author{ max-width: 80%; right: 20px; bottom: 20px; }
   .hero-author .name{ font-size: 22px; margin-bottom: 10px; }
   .hero-author li{ font-size: 12px; }
+
+  /* На мобайле прячем боковые badges чтобы не лезли */
+  .hfb-trophy,
+  .hfb-members{ right: -12px; }
+  .hfb-guarantee,
+  .hfb-jp{ left: -12px; }
+  .hero-float-badge{
+    min-width: 130px;
+    padding: 8px 10px;
+  }
+  .hfb-icon{ width: 28px; height: 28px; font-size: 16px; }
+}
+@media (max-width: 520px){
+  .hero-float-badge{ display: none; }
 }
 
 /* ============================================================
@@ -489,13 +615,18 @@ em, .italic{
 /* ============================================================
    REVIEWS AUTO-MARQUEE
    ============================================================ */
+.reviews-hint{
+  font-size: 12px;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+  margin-top: 6px;
+}
 .reviews-marquee{
   position: relative;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   overflow: hidden;
   padding: 8px 0 32px;
-  /* Fade out at edges */
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
           mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
 }
@@ -520,10 +651,37 @@ em, .italic{
   background: var(--bg-elevated);
   border: 1px solid var(--line-soft);
   position: relative;
-  transition: border-color 0.4s var(--ease-out);
+  transition: border-color 0.4s var(--ease-out), transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+  cursor: zoom-in;
 }
 .review-item:hover{
-  border-color: var(--line-strong);
+  border-color: var(--gold);
+  transform: scale(1.04) translateY(-4px);
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6), 0 0 0 1px var(--line-strong);
+}
+/* Иконка "открыть" */
+.review-item::after{
+  content: '⊕';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(8,5,10,0.7);
+  backdrop-filter: blur(6px);
+  color: var(--gold);
+  border: 1px solid var(--line-strong);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 2;
+}
+.review-item:hover::after{
+  opacity: 1;
 }
 .review-item img{
   width: 100%; height: 100%;
@@ -536,7 +694,67 @@ em, .italic{
 }
 
 /* ============================================================
-   SECTION: SOFTWARE (THREE STACKED BLOCKS)
+   LIGHTBOX
+   ============================================================ */
+.lightbox{
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s var(--ease-out);
+}
+.lightbox.active{
+  opacity: 1;
+  pointer-events: all;
+}
+.lightbox-backdrop{
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 2, 6, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.lightbox img{
+  position: relative;
+  z-index: 1;
+  max-height: 90vh;
+  max-width: 90vw;
+  border-radius: var(--radius);
+  box-shadow: 0 60px 120px -30px rgba(0,0,0,0.9), 0 0 0 1px var(--line);
+  transform: scale(0.92);
+  transition: transform 0.4s var(--ease-out);
+}
+.lightbox.active img{
+  transform: scale(1);
+}
+.lightbox-close{
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.3s, transform 0.3s;
+}
+.lightbox-close:hover{
+  background: rgba(255,255,255,0.15);
+  transform: rotate(90deg);
+}
+
+/* ============================================================
+   SECTION: SOFTWARE — С МОКАПАМИ УСТРОЙСТВ
    ============================================================ */
 .software{
   padding: 140px 0;
@@ -557,11 +775,10 @@ em, .italic{
   align-items: center;
   position: relative;
 }
-/* Reverse every 2nd block (text-photo instead of photo-text) */
 .soft-card:nth-child(even){
   grid-template-columns: 1fr 1.15fr;
 }
-.soft-card:nth-child(even) .soft-photo{ order: 2; }
+.soft-card:nth-child(even) .soft-photo-wrap{ order: 2; }
 .soft-card:nth-child(even) .soft-content{ order: 1; }
 
 .soft-content{
@@ -569,7 +786,6 @@ em, .italic{
   flex-direction: column;
   gap: 22px;
 }
-
 .soft-num{
   font-family: var(--display);
   font-style: italic;
@@ -578,32 +794,6 @@ em, .italic{
   color: var(--gold);
   letter-spacing: 0.1em;
 }
-
-/* Soft photo (replaces laptop mockups) */
-.soft-photo{
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  position: relative;
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: #050307;
-  border: 1px solid var(--line-soft);
-  box-shadow:
-    0 30px 60px -20px rgba(0,0,0,0.7),
-    inset 0 1px 0 rgba(255,255,255,0.04);
-  transition: transform 0.5s var(--ease-out), border-color 0.5s var(--ease-out);
-}
-.soft-photo img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.soft-card:hover .soft-photo{
-  transform: scale(1.02);
-  border-color: var(--line);
-}
-
 .soft-title{
   font-size: clamp(28px, 3.2vw, 42px);
   font-weight: 800;
@@ -620,6 +810,171 @@ em, .italic{
   max-width: 520px;
 }
 
+/* ---- soft-photo (базовый стиль для экрана) ---- */
+.soft-photo{
+  width: 100%;
+  position: relative;
+  background: #050307;
+  overflow: hidden;
+}
+.soft-photo img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ============================================================
+   DEVICE MOCKUPS
+   ============================================================ */
+
+/* Обёртка */
+.soft-photo-wrap{
+  width: 100%;
+  position: relative;
+}
+
+/* ---------- MacBook ---------- */
+.device--macbook{
+  position: relative;
+  width: 100%;
+  filter: drop-shadow(0 40px 60px rgba(0,0,0,0.75));
+  transition: filter 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+}
+.soft-card:hover .device--macbook{
+  transform: translateY(-6px) rotate3d(1, 0, 0, 2deg);
+  filter: drop-shadow(0 60px 80px rgba(0,0,0,0.85));
+}
+
+.device--macbook .device-top-bar{
+  height: 28px;
+  background: linear-gradient(180deg, #3a3a46 0%, #2c2c38 100%);
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-bottom: none;
+  position: relative;
+}
+.device--macbook .device-top-bar::before{
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+}
+.device--macbook .device-camera{
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #111116;
+  box-shadow: 0 0 0 1.5px rgba(255,255,255,0.1), inset 0 0 4px rgba(0,180,255,0.3);
+}
+
+.device--macbook .device-screen{
+  border-left: 14px solid #252530;
+  border-right: 14px solid #252530;
+  border-bottom: 10px solid #252530;
+  aspect-ratio: 16 / 10;
+  position: relative;
+  background: #0d0d14;
+}
+.device--macbook .device-screen::after{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.device--macbook .device-bottom-bar{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.device--macbook .device-hinge{
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(180deg, #2a2a36, #1e1e28);
+  border-left: 14px solid #252530;
+  border-right: 14px solid #252530;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.device--macbook .device-foot{
+  width: 45%;
+  height: 10px;
+  background: linear-gradient(180deg, #232330, #1a1a24);
+  border-radius: 0 0 8px 8px;
+  position: relative;
+}
+.device--macbook .device-foot::before{
+  content: '';
+  position: absolute;
+  inset: 0 0 0 0;
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.04) 50%, transparent 70%);
+}
+
+/* Тёмная вариация */
+.device--dark .device-top-bar{ background: linear-gradient(180deg, #1a1a22 0%, #131318 100%); }
+.device--dark .device-screen{ border-color: #111116; background: #06060a; }
+.device--dark .device-hinge{ background: linear-gradient(180deg, #131318, #0d0d12); border-color: #111116; }
+.device--dark .device-foot{ background: linear-gradient(180deg, #0f0f14, #0a0a0f); }
+
+/* ---------- Monitor ---------- */
+.device--monitor{
+  position: relative;
+  width: 100%;
+  filter: drop-shadow(0 40px 60px rgba(0,0,0,0.75));
+  transition: filter 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+}
+.soft-card:hover .device--monitor{
+  transform: translateY(-6px);
+  filter: drop-shadow(0 60px 80px rgba(0,0,0,0.85));
+}
+.device--monitor .device-screen{
+  aspect-ratio: 16 / 9;
+  border: 14px solid #1e1e28;
+  border-radius: 10px 10px 0 0;
+  border-bottom-width: 28px;
+  position: relative;
+  background: #060609;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    inset 0 0 0 1px rgba(0,0,0,0.8);
+}
+.device--monitor .device-screen::before{
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+}
+.device--monitor .device-screen::after{
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 40%);
+  pointer-events: none;
+}
+.device--monitor .device-monitor-stand{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.device--monitor .device-monitor-neck{
+  width: 12px;
+  height: 28px;
+  background: linear-gradient(180deg, #1e1e28, #14141c);
+}
+.device--monitor .device-monitor-base{
+  width: 40%;
+  height: 10px;
+  background: linear-gradient(180deg, #1e1e28, #14141c);
+  border-radius: 0 0 6px 6px;
+}
+
 @media (max-width: 980px){
   .software{ padding: 80px 0; }
   .software .section-head{ margin-bottom: 50px; }
@@ -629,7 +984,7 @@ em, .italic{
     grid-template-columns: 1fr;
     gap: 24px;
   }
-  .soft-card:nth-child(even) .soft-photo{ order: 0; }
+  .soft-card:nth-child(even) .soft-photo-wrap{ order: 0; }
   .soft-card:nth-child(even) .soft-content{ order: 0; }
 }
 
@@ -678,8 +1033,7 @@ em, .italic{
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    repeating-linear-gradient(45deg, rgba(212,175,106,0.04) 0 1px, transparent 1px 24px);
+  background: repeating-linear-gradient(45deg, rgba(212,175,106,0.04) 0 1px, transparent 1px 24px);
   pointer-events: none;
 }
 @media (max-width: 980px){
@@ -789,9 +1143,7 @@ em, .italic{
   border-radius: 999px;
   white-space: nowrap;
 }
-.price-card.sold{
-  opacity: 0.7;
-}
+.price-card.sold{ opacity: 0.7; }
 .price-card.sold::after{
   content: 'SOLD OUT';
   position: absolute;
@@ -850,7 +1202,6 @@ em, .italic{
 .price-list li.gold::before{
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 1l1.8 4.1L13 6l-3 3 0.8 4.3L7 11.3 3.2 13.3 4 9 1 6l4.2-0.9L7 1z' fill='%23d4af6a'/%3E%3C/svg%3E");
 }
-
 .price-cost{
   display: flex;
   align-items: baseline;
@@ -892,14 +1243,13 @@ em, .italic{
   gap: 10px;
 }
 .price-buy .btn{ padding: 16px 22px; font-size: 13px; }
-
 @media (max-width: 980px){
   .pricing-grid{ grid-template-columns: 1fr; gap: 18px; }
   .price-card.featured{ transform: none; }
 }
 
 /* ============================================================
-   SECTION: PROMO (BIRTHDAY)
+   SECTION: PROMO — BIRTHDAY MODE 🎂
    ============================================================ */
 .promo{
   padding: 80px 0;
@@ -909,8 +1259,8 @@ em, .italic{
   padding: 64px 56px;
   border-radius: var(--radius-lg);
   background:
-    radial-gradient(circle at 80% 30%, rgba(212,175,106,0.18), transparent 50%),
-    radial-gradient(circle at 20% 80%, rgba(177,32,47,0.25), transparent 50%),
+    radial-gradient(circle at 80% 30%, rgba(212,175,106,0.22), transparent 50%),
+    radial-gradient(circle at 20% 80%, rgba(177,32,47,0.28), transparent 50%),
     linear-gradient(135deg, var(--bg-elevated), var(--bg-near));
   border: 1px solid var(--line-strong);
   overflow: hidden;
@@ -925,14 +1275,67 @@ em, .italic{
   top: 0; left: 0; right: 0; height: 1px;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
-.promo-card::after{
-  content: '🎂';
+
+/* Confetti canvas */
+.confetti-canvas{
   position: absolute;
-  top: -20px; right: -20px;
-  font-size: 220px;
-  opacity: 0.05;
-  transform: rotate(-12deg);
-  filter: grayscale(0.4);
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: var(--radius-lg);
+}
+
+/* Декоративные звёзды */
+.bday-deco--stars{
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 24px;
+  z-index: 1;
+  pointer-events: none;
+}
+.bday-deco--stars span{
+  font-size: 16px;
+  color: var(--gold);
+  opacity: 0.5;
+  animation: starTwinkle 2s ease-in-out infinite;
+}
+.bday-deco--stars span:nth-child(2){ animation-delay: 0.7s; opacity: 0.7; }
+.bday-deco--stars span:nth-child(3){ animation-delay: 1.4s; }
+@keyframes starTwinkle{
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%       { opacity: 0.9; transform: scale(1.3); }
+}
+
+/* Воздушные шары */
+.bday-balloons{
+  position: absolute;
+  top: 0; right: 60px;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+}
+.balloon{
+  font-size: 28px;
+  animation: balloonBob 3s ease-in-out infinite;
+  transform-origin: bottom center;
+  opacity: 0.7;
+}
+.b-1{ animation-delay: 0s; }
+.b-2{ animation-delay: 1s; }
+.b-3{ animation-delay: 0.5s; }
+@keyframes balloonBob{
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%       { transform: translateY(-10px) rotate(3deg); }
+}
+
+/* Текстовая часть */
+.promo-text{
+  position: relative;
+  z-index: 2;
 }
 .promo-tag{
   display: inline-flex;
@@ -964,10 +1367,10 @@ em, .italic{
 .promo-dates{
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-auto-rows: max-content;
   gap: 16px;
   align-self: start;
   align-items: start;
+  margin-bottom: 0;
 }
 .promo-date{
   padding: 18px 22px;
@@ -995,54 +1398,6 @@ em, .italic{
   line-height: 1.1;
 }
 .promo-date.is-start .val{ color: var(--gold); }
-
-.promo-price{
-  position: relative;
-  text-align: center;
-}
-.promo-price .old{
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 60px;
-  color: var(--text-faint);
-  text-decoration: line-through;
-  text-decoration-color: var(--wine-bright);
-  text-decoration-thickness: 3px;
-  display: block;
-  margin-bottom: 4px;
-}
-.promo-price .arrow{
-  font-size: 20px;
-  color: var(--gold);
-  display: block;
-  margin-bottom: 4px;
-}
-.promo-price .new{
-  font-family: var(--display);
-  font-style: italic;
-  font-weight: 600;
-  font-size: clamp(96px, 12vw, 152px);
-  background: linear-gradient(135deg, var(--gold), var(--wine-bright));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  display: block;
-  line-height: 1;
-  letter-spacing: -0.04em;
-}
-.promo-price .new sup{ font-size: 0.45em; }
-.promo-price .save{
-  display: inline-block;
-  margin-top: 16px;
-  padding: 6px 14px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  font-size: 13px;
-  color: var(--gold);
-  letter-spacing: 0.04em;
-}
 
 /* Countdown */
 .countdown{
@@ -1077,14 +1432,162 @@ em, .italic{
   margin-top: 6px;
 }
 
+/* Правая часть — фото + цена */
+.promo-price-wrap{
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+/* === Праздничное фото === */
+.bday-photo{
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  position: relative;
+}
+.bday-photo-frame{
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2px solid var(--line-strong);
+  box-shadow:
+    0 30px 60px rgba(0,0,0,0.6),
+    0 0 0 6px rgba(212,175,106,0.06),
+    0 0 60px rgba(212,175,106,0.08);
+  aspect-ratio: 3 / 4;
+}
+.bday-photo-frame img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+  filter: contrast(1.05) saturate(1.1) brightness(1.05);
+}
+/* Праздничное свечение */
+.bday-glow{
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(212,175,106,0.12) 0%, transparent 50%),
+    linear-gradient(0deg, rgba(177,32,47,0.2) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 1;
+}
+.bday-photo-overlay{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+/* Лента с поздравлением */
+.bday-ribbon{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  text-align: center;
+  padding: 14px;
+  background: linear-gradient(0deg, rgba(8,5,10,0.9) 0%, rgba(8,5,10,0.5) 100%);
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(4px);
+}
+/* Стикеры */
+.bday-sticker{
+  position: absolute;
+  z-index: 4;
+  font-size: 32px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+}
+.bday-sticker--cake{
+  top: -14px;
+  right: -14px;
+  animation: stickerSpin 8s linear infinite;
+}
+.bday-sticker--confetti{
+  bottom: 50px;
+  left: -14px;
+  animation: stickerBounce 2.5s ease-in-out infinite;
+}
+@keyframes stickerSpin{
+  0%   { transform: rotate(0deg) scale(1); }
+  25%  { transform: rotate(15deg) scale(1.15); }
+  75%  { transform: rotate(-10deg) scale(0.95); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+@keyframes stickerBounce{
+  0%, 100% { transform: translateY(0) rotate(-10deg); }
+  50%       { transform: translateY(-8px) rotate(5deg); }
+}
+
+/* Цена */
+.promo-price{
+  text-align: center;
+}
+.promo-price .old{
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 44px;
+  color: var(--text-faint);
+  text-decoration: line-through;
+  text-decoration-color: var(--wine-bright);
+  text-decoration-thickness: 3px;
+  display: block;
+  margin-bottom: 4px;
+}
+.promo-price .arrow{
+  font-size: 20px;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 4px;
+}
+.promo-price .new{
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(72px, 10vw, 120px);
+  background: linear-gradient(135deg, var(--gold), var(--wine-bright));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: block;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.promo-price .new sup{ font-size: 0.45em; }
+.promo-price .save{
+  display: inline-block;
+  margin-top: 16px;
+  padding: 6px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+}
+
 @media (max-width: 980px){
-  .promo-card{ grid-template-columns: 1fr; padding: 44px 28px; gap: 32px; }
-  .promo-card::after{ font-size: 140px; }
-  .promo-price{ padding: 12px 0 4px; border-top: 1px solid var(--line-soft); padding-top: 28px; }
-  .promo-price .new{ font-size: clamp(80px, 24vw, 120px); }
-  .promo-price .old{ font-size: 40px; }
-  .promo-date .lbl{ letter-spacing: 0.14em; font-size: 9.5px; }
-  .promo-date .val{ font-size: 24px; }
+  .promo-card{
+    grid-template-columns: 1fr;
+    padding: 44px 28px;
+    gap: 32px;
+  }
+  .promo-price-wrap{ flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .bday-photo{ max-width: 200px; }
+  .promo-price .new{ font-size: clamp(60px, 22vw, 100px); }
+  .promo-price .old{ font-size: 32px; }
+  .bday-balloons{ right: 20px; }
 }
 
 /* ============================================================
@@ -1115,9 +1618,7 @@ em, .italic{
   margin: 0 auto;
   color: var(--text);
 }
-.guarantee h2 em{
-  color: var(--gold);
-}
+.guarantee h2 em{ color: var(--gold); }
 .kaspi-note{
   margin-top: 28px;
   display: inline-block;
