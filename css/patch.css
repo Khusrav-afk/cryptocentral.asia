@@ -780,3 +780,48 @@
     right: 3%;
   }
 }
+
+
+/* ============================================================
+   NAV + BADGES FIX
+   ============================================================ */
+
+/* Nav: добавляем минимальный wordmark слева чтобы кнопка не висела одна */
+.nav-row--solo {
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-row--solo::before {
+  content: 'Muslim';
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 20px;
+  color: rgba(243,236,226,0.7);
+  letter-spacing: -0.01em;
+}
+
+/* --- Badges: опускаем ниже, не перекрываем лицо --- */
+
+/* ТОП-3 трейдер — уровень плеч */
+.hero--fullbleed .hfb-trophy {
+  top: auto;
+  bottom: 42%;
+  right: 5%;
+}
+
+/* 250+ участников — ниже, у пояса */
+.hero--fullbleed .hfb-members {
+  bottom: 16%;
+  right: 4%;
+}
+
+/* JP Morgan — возвращаем, справа посередине между двумя */
+.hero--fullbleed .hfb-jp {
+  display: flex;
+  top: auto;
+  bottom: 29%;
+  right: 5%;
+  left: auto;
+  animation-delay: 2.2s;
+}
