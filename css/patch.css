@@ -825,3 +825,51 @@
   left: auto;
   animation-delay: 2.2s;
 }
+
+
+/* ============================================================
+   HERO BADGE + PHOTO + AUTHOR FIX
+   ============================================================ */
+
+/* JP Morgan — переносим на ЛЕВУЮ сторону */
+.hero--fullbleed .hfb-jp {
+  display: flex;
+  bottom: 32%;
+  left: 3%;
+  right: auto;
+  top: auto;
+  animation-delay: 2.2s;
+}
+
+/* ТОП-3 — правая сторона, чуть ниже */
+.hero--fullbleed .hfb-trophy {
+  bottom: 46%;
+  right: 5%;
+  top: auto;
+}
+
+/* 250+ — правая сторона, снизу */
+.hero--fullbleed .hfb-members {
+  bottom: 14%;
+  right: 4%;
+}
+
+/* Фото: сдвигаем вниз чтобы голова не касалась кнопки.
+   Уменьшаем object-size эффективно через padding-top героя */
+.hero--fullbleed {
+  padding-top: 0;
+}
+.hero-bg img {
+  object-position: 68% 28%;
+}
+
+/* Контент: поднимаем текст выше — больше воздуха снизу */
+.hero-content {
+  padding-top: 110px;
+  padding-bottom: 110px;
+}
+
+/* "Муслим Абдуллаев" — поднимаем чуть выше от края */
+.hero-author--corner {
+  padding-bottom: 52px;
+}
