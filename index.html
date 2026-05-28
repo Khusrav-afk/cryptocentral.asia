@@ -25,16 +25,50 @@
 
 <!-- ============================== NAV ============================== -->
 <nav class="nav">
-  <div class="container nav-row">
-    <a href="#" class="nav-brand">Cryptocentral<span>.</span> Muslim</a>
+  <div class="container nav-row nav-row--solo">
     <a href="#price" class="btn btn-primary nav-cta">Выбрать тариф</a>
   </div>
 </nav>
 
 <!-- ============================== HERO ============================== -->
-<header class="hero">
-  <div class="container hero-grid">
-    <div class="hero-text reveal">
+<header class="hero hero--fullbleed">
+
+  <!-- Фото — полный экран, фоновый слой -->
+  <div class="hero-bg">
+    <img src="img/muslim-hero.png" alt="Муслим Абдуллаев">
+    <!-- Многослойный overlay: затемнение слева для текста, снизу для перехода -->
+    <div class="hero-bg-overlay"></div>
+  </div>
+
+  <!-- Floating badges — позиционируются относительно hero -->
+  <div class="hero-float-badge hfb-trophy">
+    <div class="hfb-icon">🏆</div>
+    <div class="hfb-body">
+      <strong>ТОП-3 трейдер</strong>
+      <span>Bybit 2023</span>
+    </div>
+  </div>
+
+  <div class="hero-float-badge hfb-members">
+    <div class="hfb-icon">👥</div>
+    <div class="hfb-body">
+      <strong>250+</strong>
+      <span>участников</span>
+    </div>
+  </div>
+
+  <div class="hero-float-badge hfb-jp">
+    <div class="hfb-icon">🏦</div>
+    <div class="hfb-body">
+      <strong>JP Morgan Chase</strong>
+      <span>ученик экс-президента</span>
+    </div>
+  </div>
+
+  <!-- Контент — поверх фото, прижат к левому краю -->
+  <div class="container hero-content reveal">
+
+    <div class="hero-text">
       <div class="hero-date">
         <b>07 Июня</b>
         <span>начало потока</span>
@@ -77,51 +111,20 @@
       </div>
     </div>
 
-    <!-- ======= HERO PHOTO ======= -->
-    <div class="hero-photo-col reveal">
-      <div class="hero-photo-wrapper">
-        <div class="hero-photo-glow"></div>
-        <div class="hero-photo">
-          <img src="img/muslim-hero.jpg" alt="Муслим Абдуллаев — основатель Cryptocentral">
-          <div class="hero-photo-shine"></div>
-
-          <div class="hero-author">
-            <div class="name">Муслим Абдуллаев</div>
-            <ul>
-              <li><span>3 место</span> как лучший трейдер 2023 за летний сезон в Bybit</li>
-              <li>Экс <span>амбассадор биржи Bybit</span></li>
-              <li>Ученик экс-президента <span>JP Morgan Chase</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-float-badge hfb-trophy">
-        <div class="hfb-icon">🏆</div>
-        <div class="hfb-body">
-          <strong>ТОП-3 трейдер</strong>
-          <span>Bybit 2023</span>
-        </div>
-      </div>
-
-      <div class="hero-float-badge hfb-members">
-        <div class="hfb-icon">👥</div>
-        <div class="hfb-body">
-          <strong>250+</strong>
-          <span>участников</span>
-        </div>
-      </div>
-
-      <div class="hero-float-badge hfb-jp">
-        <div class="hfb-icon">🏦</div>
-        <div class="hfb-body">
-          <strong>JP Morgan Chase</strong>
-          <span>ученик экс-президента</span>
-        </div>
-      </div>
+    <!-- Подпись автора — правый нижний угол -->
+    <div class="hero-author hero-author--corner">
+      <div class="name">Муслим Абдуллаев</div>
+      <ul>
+        <li><span>3 место</span> как лучший трейдер 2023 за летний сезон в Bybit</li>
+        <li>Экс <span>амбассадор биржи Bybit</span></li>
+        <li>Ученик экс-президента <span>JP Morgan Chase</span></li>
+      </ul>
     </div>
+
   </div>
 </header>
+
+<!-- ============================== REVIEWS</header>
 
 <!-- ============================== REVIEWS ============================== -->
 <section class="section reviews">
