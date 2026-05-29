@@ -1,3 +1,4 @@
+```js
 /* =========================================================
    VIP ПОДПИСКА 3X — main.js
    ========================================================= */
@@ -113,9 +114,9 @@
       return 3;
     }
 
-    /* Максимальный допустимый индекс — чтобы не было пустых */
+    /* Всегда ровно gsTotal позиций — одна на каждый слайд */
     function gsMaxIdx(){
-      return Math.max(0, gsTotal - gsVisible());
+      return gsTotal - 1;
     }
 
     /* Ширина одного слайда + gap */
@@ -123,11 +124,10 @@
       return gsSlides[0].getBoundingClientRect().width + 20;
     }
 
-    /* Создаём dots — только столько, сколько позиций */
+    /* Создаём dots — ровно по числу слайдов */
     function gsBuildDots(){
       gsDotsWrap.innerHTML = '';
-      const count = gsMaxIdx() + 1;
-      for (let i = 0; i < count; i++){
+      for (let i = 0; i < gsTotal; i++){
         const d = document.createElement('button');
         d.className = 'gs-dot' + (i === 0 ? ' active' : '');
         d.setAttribute('aria-label', 'Слайд ' + (i + 1));
@@ -138,7 +138,7 @@
 
     function gsGoTo(idx){
       const max = gsMaxIdx();
-      /* Зацикливаем в пределах допустимого диапазона */
+      /* Зацикливание: после последнего — в начало, и наоборот */
       if (idx > max) idx = 0;
       if (idx < 0)   idx = max;
       gsCurrent = idx;
@@ -176,3 +176,4 @@
   }
 
 })();
+```
