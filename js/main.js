@@ -1,3 +1,6 @@
+Нужно добавить клонирование слайдов для бесшовного зацикливания. Вот полный `main.js`:
+
+```js
 /* =========================================================
    VIP ПОДПИСКА 3X — main.js
    ========================================================= */
@@ -7,7 +10,7 @@
   /* ---------- Scroll reveal ---------- */
   const revealEls = document.querySelectorAll('.reveal');
 
-  /* Герой — показываем сразу, не ждём скролл */
+  /* Герой — показываем сразу */
   document.querySelectorAll('.hero .reveal').forEach(el => {
     setTimeout(() => el.classList.add('in'), 80);
   });
@@ -22,7 +25,6 @@
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
     revealEls.forEach(el => {
-      /* Героевские уже обработаны выше */
       if (!el.closest('.hero')) io.observe(el);
     });
   } else {
@@ -43,7 +45,7 @@
     });
   }
 
-  /* ---------- Smooth scroll for in-page anchors ---------- */
+  /* ---------- Smooth scroll ---------- */
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', (e) => {
       const href = a.getAttribute('href');
@@ -55,7 +57,7 @@
     });
   });
 
-  /* ---------- Countdown to June 3 (promo deadline) ---------- */
+  /* ---------- Countdown ---------- */
   function getDeadline(){
     const now = new Date();
     let year = now.getFullYear();
@@ -90,89 +92,169 @@
     setInterval(tick, 1000);
   }
 
-  /* ---------- Add page-loaded class for first-paint animation ---------- */
+  /* ---------- Page loaded ---------- */
   window.addEventListener('load', () => {
     document.body.classList.add('loaded');
   });
 
-  /* ---------- Gallery Slider ---------- */
+  /* ---------- Gallery Slider — infinite loop ---------- */
   const gsTrack    = document.getElementById('gsTrack');
   const gsBtnPrev  = document.getElementById('gsPrev');
   const gsBtnNext  = document.getElementById('gsNext');
   const gsDotsWrap = document.getElementById('gsDots');
 
   if (gsTrack && gsBtnPrev && gsBtnNext && gsDotsWrap){
-    const gsSlides = gsTrack.querySelectorAll('.gs-slide');
-    const gsTotal  = gsSlides.length; /* 5 */
-    let gsCurrent  = 0;
 
-    /* Сколько слайдов видно одновременно */
-    function gsVisible(){
+    /* Оригинальные слайды (только реальные, без клонов) */
+    const gsOrigSlides = Array.from(gsTrack.querySelectorAll('.gs-slide'));
+    const gsTotal = gsOrigSlides.length; /* 5 */
+    let gsVis  = 3;   /* сколько слайдов видно */
+    let gsPos  = 0;   /* текущий trackIndex */
+    let gsLock = false;
+
+    /* Сколько слайдов видно в зависимости от ширины */
+    function gsGetVis(){
       if (window.innerWidth <= 700)  return 1;
       if (window.innerWidth <= 1024) return 2;
       return 3;
     }
 
-    /* Максимальный допустимый индекс — чтобы не было пустых */
-    function gsMaxIdx(){
-      return Math.max(0, gsTotal - gsVisible());
-    }
-
     /* Ширина одного слайда + gap */
-    function gsGetSlideWidth(){
-      return gsSlides[0].getBoundingClientRect().width + 20;
+    function gsSlideW(){
+      const s = gsTrack.querySelector('.gs-slide');
+      return s ? s.getBoundingClientRect().width + 20 : 0;
     }
 
-    /* Создаём dots — только столько, сколько позиций */
+    /* Удалить старые клоны, добавить новые */
+    function gsSetupClones(){
+      gsTrack.querySelectorAll('.gs-clone').forEach(c => c.remove());
+
+      const vis = gsGetVis();
+
+      /* Prepend: клоны последних vis слайдов */
+      const pre = gsOrigSlides.slice(-vis).map(s => {
+        const c = s.cloneNode(true);
+        c.classList.add('gs-clone');
+        return c;
+      });
+      pre.reverse().forEach(c => gsTrack.insertBefore(c, gsTrack.firstChild));
+
+      /* Append: клоны первых vis слайдов */
+      const app = gsOrigSlides.slice(0, vis).map(s => {
+        const c = s.cloneNode(true);
+        c.classList.add('gs-clone');
+        return c;
+      });
+      app.forEach(c => gsTrack.appendChild(c));
+
+      return vis;
+    }
+
+    /* Логический индекс (0–4) */
+    function gsLogical(){
+      return ((gsPos - gsVis) % gsTotal + gsTotal) % gsTotal;
+    }
+
+    /* Переместить трек */
+    function gsMove(animate){
+      gsTrack.style.transition = animate
+        ? 'transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)'
+        : 'none';
+      gsTrack.style.transform  = 'translateX(-' + (gsPos * gsSlideW()) + 'px)';
+    }
+
+    /* Обновить точки */
+    function gsUpdateDots(){
+      const log = gsLogical();
+      gsDotsWrap.querySelectorAll('.gs-dot').forEach((d, i) =>
+        d.classList.toggle('active', i === log)
+      );
+    }
+
+    /* Построить точки */
     function gsBuildDots(){
       gsDotsWrap.innerHTML = '';
-      const count = gsMaxIdx() + 1;
-      for (let i = 0; i < count; i++){
+      for (let i = 0; i < gsTotal; i++){
         const d = document.createElement('button');
         d.className = 'gs-dot' + (i === 0 ? ' active' : '');
         d.setAttribute('aria-label', 'Слайд ' + (i + 1));
-        d.addEventListener('click', () => gsGoTo(i));
+        d.addEventListener('click', () => {
+          if (gsLock) return;
+          gsPos = i + gsVis;
+          gsMove(true);
+          gsUpdateDots();
+        });
         gsDotsWrap.appendChild(d);
       }
     }
 
-    function gsGoTo(idx){
-      const max = gsMaxIdx();
-      /* Зацикливаем в пределах допустимого диапазона */
-      if (idx > max) idx = 0;
-      if (idx < 0)   idx = max;
-      gsCurrent = idx;
-      gsTrack.style.transform = 'translateX(-' + (gsCurrent * gsGetSlideWidth()) + 'px)';
-      gsDotsWrap.querySelectorAll('.gs-dot').forEach((d, i) =>
-        d.classList.toggle('active', i === gsCurrent)
-      );
+    /* Переход на +1 или -1 */
+    function gsGoTo(dir){
+      if (gsLock) return;
+      gsLock = true;
+      gsPos += dir;
+      gsMove(true);
+      gsUpdateDots();
     }
 
-    gsBuildDots();
+    /* После анимации: если вышли за пределы — бесшовный прыжок */
+    gsTrack.addEventListener('transitionend', () => {
+      gsLock = false;
+      if (gsPos < gsVis){
+        /* Прошли назад за начало → прыгаем к концу */
+        gsPos += gsTotal;
+        gsMove(false);
+      } else if (gsPos >= gsVis + gsTotal){
+        /* Прошли вперёд за конец → прыгаем к началу */
+        gsPos -= gsTotal;
+        gsMove(false);
+      }
+    });
 
-    gsBtnPrev.addEventListener('click', () => gsGoTo(gsCurrent - 1));
-    gsBtnNext.addEventListener('click', () => gsGoTo(gsCurrent + 1));
+    /* Инициализация */
+    function gsInit(){
+      gsVis = gsSetupClones();
+      gsPos = gsVis; /* начинаем с первого реального слайда */
+      gsMove(false);
+      gsBuildDots();
+    }
+
+    gsInit();
+
+    gsBtnPrev.addEventListener('click', () => gsGoTo(-1));
+    gsBtnNext.addEventListener('click', () => gsGoTo(1));
 
     /* Auto-play */
-    let gsTimer = setInterval(() => gsGoTo(gsCurrent + 1), 4000);
+    let gsTimer = setInterval(() => gsGoTo(1), 4000);
     gsTrack.parentElement.addEventListener('mouseenter', () => clearInterval(gsTimer));
     gsTrack.parentElement.addEventListener('mouseleave', () => {
-      gsTimer = setInterval(() => gsGoTo(gsCurrent + 1), 4000);
+      gsTimer = setInterval(() => gsGoTo(1), 4000);
     });
 
     /* Touch swipe */
     let gsStartX = 0;
-    gsTrack.addEventListener('touchstart', e => { gsStartX = e.touches[0].clientX; }, { passive: true });
+    gsTrack.addEventListener('touchstart', e => {
+      gsStartX = e.touches[0].clientX;
+    }, { passive: true });
     gsTrack.addEventListener('touchend', e => {
       const dx = e.changedTouches[0].clientX - gsStartX;
-      if (Math.abs(dx) > 40) gsGoTo(gsCurrent + (dx < 0 ? 1 : -1));
+      if (Math.abs(dx) > 40) gsGoTo(dx < 0 ? 1 : -1);
     });
 
-    /* Пересчёт при ресайзе */
+    /* Resize */
+    let gsResizeTimer;
     window.addEventListener('resize', () => {
-      gsBuildDots();
-      gsGoTo(0);
+      clearTimeout(gsResizeTimer);
+      gsResizeTimer = setTimeout(() => {
+        const log = gsLogical();
+        gsVis = gsSetupClones();
+        gsPos = log + gsVis;
+        gsMove(false);
+        gsBuildDots();
+        gsUpdateDots();
+      }, 150);
     });
   }
 
 })();
+```
