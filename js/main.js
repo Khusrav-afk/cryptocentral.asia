@@ -3,8 +3,15 @@
    ========================================================= */
 (function(){
   'use strict';
+
   /* ---------- Scroll reveal ---------- */
   const revealEls = document.querySelectorAll('.reveal');
+
+  /* Герой — показываем сразу, не ждём скролл */
+  document.querySelectorAll('.hero .reveal').forEach(el => {
+    setTimeout(() => el.classList.add('in'), 80);
+  });
+
   if ('IntersectionObserver' in window){
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
@@ -14,10 +21,14 @@
         }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
-    revealEls.forEach(el => io.observe(el));
+    revealEls.forEach(el => {
+      /* Героевские уже обработаны выше */
+      if (!el.closest('.hero')) io.observe(el);
+    });
   } else {
     revealEls.forEach(el => el.classList.add('in'));
   }
+
   /* ---------- Reviews carousel ---------- */
   const track = document.getElementById('reviewsTrack');
   const carBtns = document.querySelectorAll('.car-btn');
@@ -31,6 +42,7 @@
       });
     });
   }
+
   /* ---------- Smooth scroll for in-page anchors ---------- */
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', (e) => {
@@ -42,6 +54,7 @@
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
+
   /* ---------- Countdown to June 3 (promo deadline) ---------- */
   function getDeadline(){
     const now = new Date();
@@ -76,40 +89,66 @@
     tick();
     setInterval(tick, 1000);
   }
+
   /* ---------- Add page-loaded class for first-paint animation ---------- */
   window.addEventListener('load', () => {
     document.body.classList.add('loaded');
   });
+
   /* ---------- Gallery Slider ---------- */
   const gsTrack    = document.getElementById('gsTrack');
   const gsBtnPrev  = document.getElementById('gsPrev');
   const gsBtnNext  = document.getElementById('gsNext');
   const gsDotsWrap = document.getElementById('gsDots');
+
   if (gsTrack && gsBtnPrev && gsBtnNext && gsDotsWrap){
     const gsSlides = gsTrack.querySelectorAll('.gs-slide');
-    const gsTotal  = gsSlides.length;
+    const gsTotal  = gsSlides.length; /* 5 */
     let gsCurrent  = 0;
 
-    /* Dots */
-    gsSlides.forEach((_, i) => {
-      const d = document.createElement('button');
-      d.className = 'gs-dot' + (i === 0 ? ' active' : '');
-      d.setAttribute('aria-label', 'Слайд ' + (i + 1));
-      d.addEventListener('click', () => gsGoTo(i));
-      gsDotsWrap.appendChild(d);
-    });
+    /* Сколько слайдов видно одновременно */
+    function gsVisible(){
+      if (window.innerWidth <= 700)  return 1;
+      if (window.innerWidth <= 1024) return 2;
+      return 3;
+    }
 
+    /* Максимальный допустимый индекс — чтобы не было пустых */
+    function gsMaxIdx(){
+      return Math.max(0, gsTotal - gsVisible());
+    }
+
+    /* Ширина одного слайда + gap */
     function gsGetSlideWidth(){
-      return gsSlides[0].getBoundingClientRect().width + 20; /* gap = 20px */
+      return gsSlides[0].getBoundingClientRect().width + 20;
+    }
+
+    /* Создаём dots — только столько, сколько позиций */
+    function gsBuildDots(){
+      gsDotsWrap.innerHTML = '';
+      const count = gsMaxIdx() + 1;
+      for (let i = 0; i < count; i++){
+        const d = document.createElement('button');
+        d.className = 'gs-dot' + (i === 0 ? ' active' : '');
+        d.setAttribute('aria-label', 'Слайд ' + (i + 1));
+        d.addEventListener('click', () => gsGoTo(i));
+        gsDotsWrap.appendChild(d);
+      }
     }
 
     function gsGoTo(idx){
-      gsCurrent = (idx + gsTotal) % gsTotal;
+      const max = gsMaxIdx();
+      /* Зацикливаем в пределах допустимого диапазона */
+      if (idx > max) idx = 0;
+      if (idx < 0)   idx = max;
+      gsCurrent = idx;
       gsTrack.style.transform = 'translateX(-' + (gsCurrent * gsGetSlideWidth()) + 'px)';
       gsDotsWrap.querySelectorAll('.gs-dot').forEach((d, i) =>
         d.classList.toggle('active', i === gsCurrent)
       );
     }
+
+    gsBuildDots();
 
     gsBtnPrev.addEventListener('click', () => gsGoTo(gsCurrent - 1));
     gsBtnNext.addEventListener('click', () => gsGoTo(gsCurrent + 1));
@@ -130,6 +169,10 @@
     });
 
     /* Пересчёт при ресайзе */
-    window.addEventListener('resize', () => gsGoTo(gsCurrent));
+    window.addEventListener('resize', () => {
+      gsBuildDots();
+      gsGoTo(0);
+    });
   }
+
 })();
