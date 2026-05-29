@@ -1,3 +1,4 @@
+```css
 /* ============================================================
    PATCH v3 — три правки hero:
    1. Текст сдвинут к центру, не прижат к левому краю
@@ -100,41 +101,35 @@
   z-index: 2;
   width: 100%;
   display: grid;
-  /* Текст занимает ~50% от центра, правее чем раньше */
   grid-template-columns: 50% 1fr;
   align-items: flex-end;
   padding-top: 120px;
   padding-bottom: 100px;
   gap: 40px;
-  /* Сдвигаем весь контейнер правее — ближе к середине экрана */
   padding-left: 10%;
   padding-right: 3%;
   max-width: 100%;
   box-sizing: border-box;
 }
 
-/* Текстовый блок: выравнивание чуть улучшено */
+/* Текстовый блок */
 .hero--fullbleed .hero-text {
   max-width: 520px;
   width: 100%;
 }
 
-/* Дата — чуть меньше отступ снизу */
 .hero--fullbleed .hero-text .hero-date {
   margin-bottom: 24px;
 }
 
-/* Заголовок — tight, без лишних отступов */
 .hero--fullbleed .hero-title {
   margin-bottom: 20px;
 }
 
-/* Подзаголовок ближе к заголовку */
 .hero--fullbleed .hero-sub {
   margin-bottom: 28px;
 }
 
-/* Буллеты — чуть компактнее */
 .hero--fullbleed .bullets {
   margin-bottom: 36px;
 }
@@ -181,9 +176,6 @@
 
 /* ============================================================
    FIX 2 — Бейджи
-   JP Morgan — справа от тела (по стрелке на скриншоте)
-   ТОП-3 — правый верх, над плечом
-   250+ — правый низ
    ============================================================ */
 .hero--fullbleed .hero-float-badge {
   position: absolute;
@@ -191,7 +183,6 @@
   min-width: 155px;
 }
 
-/* ТОП-3 трейдер — правый верх, над плечом */
 .hero--fullbleed .hfb-trophy {
   top: auto;
   bottom: 52%;
@@ -200,7 +191,6 @@
   animation-delay: 0s;
 }
 
-/* JP Morgan Chase — касается груди, чуть правее центра */
 .hero--fullbleed .hfb-jp {
   display: flex;
   top: auto;
@@ -210,7 +200,6 @@
   animation-delay: 1.2s;
 }
 
-/* 250+ участников — поднимаем выше, не перекрывает подпись автора */
 .hero--fullbleed .hfb-members {
   top: auto;
   bottom: 24%;
@@ -233,14 +222,13 @@
 }
 
 /* ============================================================
-   NAV — дата слева, кнопка справа
+   NAV
    ============================================================ */
 .nav-row--solo {
   justify-content: space-between;
   align-items: center;
 }
 
-/* Растягиваем nav на полную ширину экрана */
 .nav .container.nav-row--solo,
 .nav-row--solo {
   max-width: 100%;
@@ -248,7 +236,6 @@
   padding-right: 32px;
 }
 
-/* Кнопка прижата к самому правому краю */
 .nav-row--solo .nav-cta {
   margin-left: auto;
   flex-shrink: 0;
@@ -260,11 +247,11 @@
   -webkit-backdrop-filter: blur(10px);
 }
 .hero-content .hero-date {
-  display: none; /* дата в nav, не дублируем */
+  display: none;
 }
 
 /* ============================================================
-   HERO PHOTO seamless — из main.css
+   HERO PHOTO seamless
    ============================================================ */
 .hero-photo {
   border-radius: 0 !important;
@@ -328,7 +315,23 @@
 }
 
 /* ============================================================
-   DEVICE MOCKUPS — ambient glow под экраном
+   Canvas конфетти — убираем из потока
+   ============================================================ */
+.promo .container {
+  position: relative;
+}
+
+#bday-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================================
+   DEVICE MOCKUPS — ambient glow
    ============================================================ */
 .soft-photo-wrap::after {
   content: '';
@@ -368,7 +371,7 @@
 }
 
 /* ============================================================
-   GALLERY SLIDER — секция между hero и отзывами
+   GALLERY SLIDER
    ============================================================ */
 .gallery-slider {
   padding: 100px 0 60px;
@@ -379,7 +382,6 @@
   margin-bottom: 48px;
 }
 
-/* Вьюпорт — обрезает вылезающие слайды */
 .gs-viewport {
   position: relative;
   width: 100%;
@@ -387,7 +389,6 @@
   padding: 12px 0 16px;
 }
 
-/* Трек — горизонтальная лента слайдов */
 .gs-track {
   display: flex;
   gap: 20px;
@@ -396,7 +397,6 @@
   padding: 0 40px;
 }
 
-/* Один слайд */
 .gs-slide {
   flex: 0 0 calc(33.333% - 54px);
   aspect-ratio: 4 / 3;
@@ -422,7 +422,6 @@
   transform: scale(1.05);
 }
 
-/* Кнопки влево/вправо */
 .gs-btn {
   position: absolute;
   top: 50%;
@@ -450,7 +449,6 @@
 .gs-btn--prev { left: 8px; }
 .gs-btn--next { right: 8px; }
 
-/* Fade-маски по краям — плавное исчезание */
 .gs-fade {
   position: absolute;
   top: 0; bottom: 0;
@@ -467,7 +465,6 @@
   background: linear-gradient(270deg, var(--bg-deep), transparent);
 }
 
-/* Точки-индикаторы */
 .gs-dots {
   display: flex;
   justify-content: center;
@@ -490,7 +487,6 @@
   transform: none;
 }
 
-/* Responsive */
 @media (max-width: 1024px) {
   .gs-slide { flex: 0 0 calc(50% - 30px); }
 }
@@ -498,3 +494,4 @@
   .gs-slide { flex: 0 0 calc(100% - 80px); }
   .gallery-slider { padding: 60px 0 40px; }
 }
+```
