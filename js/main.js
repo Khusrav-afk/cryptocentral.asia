@@ -1,10 +1,8 @@
 /* =========================================================
    VIP ПОДПИСКА 3X — main.js
    ========================================================= */
-
 (function(){
   'use strict';
-
   /* ---------- Scroll reveal ---------- */
   const revealEls = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window){
@@ -20,7 +18,6 @@
   } else {
     revealEls.forEach(el => el.classList.add('in'));
   }
-
   /* ---------- Reviews carousel ---------- */
   const track = document.getElementById('reviewsTrack');
   const carBtns = document.querySelectorAll('.car-btn');
@@ -34,7 +31,6 @@
       });
     });
   }
-
   /* ---------- Smooth scroll for in-page anchors ---------- */
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', (e) => {
@@ -46,33 +42,25 @@
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
-
   /* ---------- Countdown to June 3 (promo deadline) ---------- */
-  /* Если акция уже завершилась, скрипт автоматически возьмёт
-     следующий год — чтобы при повторном использовании страницы
-     счётчик не показывал «прошедшее». */
   function getDeadline(){
     const now = new Date();
     let year = now.getFullYear();
-    // Дедлайн: 3 июня 23:59:59 по времени Алматы (UTC+5)
-    let dl = new Date(Date.UTC(year, 5, 3, 23 - 5, 59, 59)); // месяц 5 = июнь
+    let dl = new Date(Date.UTC(year, 5, 3, 23 - 5, 59, 59));
     if (dl.getTime() <= now.getTime()){
       dl = new Date(Date.UTC(year + 1, 5, 3, 23 - 5, 59, 59));
     }
     return dl;
   }
-
   const cdEls = {
     days:  document.querySelector('[data-cd="days"]'),
     hours: document.querySelector('[data-cd="hours"]'),
     mins:  document.querySelector('[data-cd="mins"]'),
     secs:  document.querySelector('[data-cd="secs"]')
   };
-
   if (cdEls.days){
     const deadline = getDeadline();
     const pad = (n) => String(n).padStart(2, '0');
-
     const tick = () => {
       let diff = deadline.getTime() - Date.now();
       if (diff < 0) diff = 0;
@@ -88,10 +76,60 @@
     tick();
     setInterval(tick, 1000);
   }
-
   /* ---------- Add page-loaded class for first-paint animation ---------- */
   window.addEventListener('load', () => {
     document.body.classList.add('loaded');
   });
+  /* ---------- Gallery Slider ---------- */
+  const gsTrack    = document.getElementById('gsTrack');
+  const gsBtnPrev  = document.getElementById('gsPrev');
+  const gsBtnNext  = document.getElementById('gsNext');
+  const gsDotsWrap = document.getElementById('gsDots');
+  if (gsTrack && gsBtnPrev && gsBtnNext && gsDotsWrap){
+    const gsSlides = gsTrack.querySelectorAll('.gs-slide');
+    const gsTotal  = gsSlides.length;
+    let gsCurrent  = 0;
 
+    /* Dots */
+    gsSlides.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'gs-dot' + (i === 0 ? ' active' : '');
+      d.setAttribute('aria-label', 'Слайд ' + (i + 1));
+      d.addEventListener('click', () => gsGoTo(i));
+      gsDotsWrap.appendChild(d);
+    });
+
+    function gsGetSlideWidth(){
+      return gsSlides[0].getBoundingClientRect().width + 20; /* gap = 20px */
+    }
+
+    function gsGoTo(idx){
+      gsCurrent = (idx + gsTotal) % gsTotal;
+      gsTrack.style.transform = 'translateX(-' + (gsCurrent * gsGetSlideWidth()) + 'px)';
+      gsDotsWrap.querySelectorAll('.gs-dot').forEach((d, i) =>
+        d.classList.toggle('active', i === gsCurrent)
+      );
+    }
+
+    gsBtnPrev.addEventListener('click', () => gsGoTo(gsCurrent - 1));
+    gsBtnNext.addEventListener('click', () => gsGoTo(gsCurrent + 1));
+
+    /* Auto-play */
+    let gsTimer = setInterval(() => gsGoTo(gsCurrent + 1), 4000);
+    gsTrack.parentElement.addEventListener('mouseenter', () => clearInterval(gsTimer));
+    gsTrack.parentElement.addEventListener('mouseleave', () => {
+      gsTimer = setInterval(() => gsGoTo(gsCurrent + 1), 4000);
+    });
+
+    /* Touch swipe */
+    let gsStartX = 0;
+    gsTrack.addEventListener('touchstart', e => { gsStartX = e.touches[0].clientX; }, { passive: true });
+    gsTrack.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - gsStartX;
+      if (Math.abs(dx) > 40) gsGoTo(gsCurrent + (dx < 0 ? 1 : -1));
+    });
+
+    /* Пересчёт при ресайзе */
+    window.addEventListener('resize', () => gsGoTo(gsCurrent));
+  }
 })();
