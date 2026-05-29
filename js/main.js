@@ -1,4 +1,3 @@
-```js
 /* =========================================================
    VIP ПОДПИСКА 3X — main.js
    ========================================================= */
@@ -104,15 +103,8 @@
 
   if (gsTrack && gsBtnPrev && gsBtnNext && gsDotsWrap){
     const gsSlides = gsTrack.querySelectorAll('.gs-slide');
-    const gsTotal  = gsSlides.length; /* 5 */
+    const gsTotal  = gsSlides.length;
     let gsCurrent  = 0;
-
-    /* Сколько слайдов видно одновременно */
-    function gsVisible(){
-      if (window.innerWidth <= 700)  return 1;
-      if (window.innerWidth <= 1024) return 2;
-      return 3;
-    }
 
     /* Всегда ровно gsTotal позиций — одна на каждый слайд */
     function gsMaxIdx(){
@@ -176,4 +168,3 @@
   }
 
 })();
-```
