@@ -1,244 +1,497 @@
-/* =========================================================
-   VIP ПОДПИСКА 3X — main.js
-   ========================================================= */
-(function(){
-  'use strict';
+```css
+/* ============================================================
+   PATCH v3 — три правки hero:
+   1. Текст сдвинут к центру, не прижат к левому краю
+   2. JP Morgan badge — справа от тела, по стрелке
+   3. Фото чуть меньше — больше воздуха над головой
+   ============================================================ */
 
-  /* ---------- Scroll reveal ---------- */
-  const revealEls = document.querySelectorAll('.reveal');
+/* ============================================================
+   BASE — hero fullbleed layout
+   ============================================================ */
+.hero--fullbleed {
+  position: relative;
+  min-height: 100vh;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
 
-  function showVisible(){
-    revealEls.forEach(el => {
-      const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight - 60){
-        el.classList.add('in');
-      }
-    });
+.hero--fullbleed .hero-grid,
+.hero--fullbleed .hero-photo-col,
+.hero--fullbleed .hero-photo-wrapper,
+.hero--fullbleed .hero-photo-glow {
+  display: none !important;
+}
+
+/* Фоновое фото */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: contrast(1.04) saturate(1.06) brightness(0.92);
+}
+
+/* ============================================================
+   FIX 3 — Фото: голова значительно ниже от кнопки навигации
+   Увеличиваем вертикальное смещение с 35% до 55%
+   ============================================================ */
+.hero-bg img {
+  object-position: 60% 55%;
+}
+
+/* ============================================================
+   OVERLAY — многослойный, текстовая зона слева затемнена
+   ============================================================ */
+.hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    /* Левая зона — плотное затемнение под текст */
+    linear-gradient(
+      100deg,
+      rgba(8,5,10,0.93) 0%,
+      rgba(8,5,10,0.82) 22%,
+      rgba(8,5,10,0.48) 44%,
+      rgba(8,5,10,0.10) 60%,
+      transparent 72%
+    ),
+    /* Снизу — seamless переход в фон */
+    linear-gradient(
+      0deg,
+      rgba(8,5,10,1)    0%,
+      rgba(8,5,10,0.75) 9%,
+      rgba(8,5,10,0.22) 26%,
+      transparent       44%
+    ),
+    /* Сверху — под навигацию */
+    linear-gradient(
+      180deg,
+      rgba(8,5,10,0.55) 0%,
+      transparent 16%
+    ),
+    /* Правая виньетка */
+    linear-gradient(
+      270deg,
+      rgba(8,5,10,0.55) 0%,
+      rgba(8,5,10,0.18) 14%,
+      transparent 32%
+    ),
+    /* Тёплый amber акцент слева */
+    radial-gradient(
+      ellipse 36% 50% at 0% 44%,
+      rgba(150,70,15,0.18),
+      transparent 68%
+    );
+}
+
+/* ============================================================
+   FIX 1 — Текст к центру, не прижат к краю
+   Контейнер: отступ слева 8–12% от ширины экрана
+   ============================================================ */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 50% 1fr;
+  align-items: flex-end;
+  padding-top: 120px;
+  padding-bottom: 100px;
+  gap: 40px;
+  padding-left: 10%;
+  padding-right: 3%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Текстовый блок */
+.hero--fullbleed .hero-text {
+  max-width: 520px;
+  width: 100%;
+}
+
+.hero--fullbleed .hero-text .hero-date {
+  margin-bottom: 24px;
+}
+
+.hero--fullbleed .hero-title {
+  margin-bottom: 20px;
+}
+
+.hero--fullbleed .hero-sub {
+  margin-bottom: 28px;
+}
+
+.hero--fullbleed .bullets {
+  margin-bottom: 36px;
+}
+
+/* ============================================================
+   АВТОР — правый нижний угол
+   ============================================================ */
+.hero-author--corner {
+  text-align: right;
+  align-self: flex-end;
+  padding-bottom: 28px;
+  padding-left: 20px;
+}
+.hero-author--corner .name {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  color: rgba(243,236,226,0.75);
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+}
+.hero-author--corner ul {
+  list-style: none;
+  padding: 0; margin: 0;
+}
+.hero-author--corner li {
+  position: relative;
+  padding-right: 14px;
+  font-size: 12px;
+  color: rgba(243,236,226,0.45);
+  line-height: 1.5;
+}
+.hero-author--corner li + li { margin-top: 6px; }
+.hero-author--corner li span { color: rgba(212,175,106,0.75); }
+.hero-author--corner li::before {
+  content: '';
+  position: absolute;
+  right: 0; top: 8px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(212,175,106,0.4);
+}
+
+/* ============================================================
+   FIX 2 — Бейджи
+   ============================================================ */
+.hero--fullbleed .hero-float-badge {
+  position: absolute;
+  z-index: 5;
+  min-width: 155px;
+}
+
+.hero--fullbleed .hfb-trophy {
+  top: auto;
+  bottom: 52%;
+  right: 3%;
+  left: auto;
+  animation-delay: 0s;
+}
+
+.hero--fullbleed .hfb-jp {
+  display: flex;
+  top: auto;
+  bottom: 36%;
+  right: auto;
+  left: 60%;
+  animation-delay: 1.2s;
+}
+
+.hero--fullbleed .hfb-members {
+  top: auto;
+  bottom: 24%;
+  right: 3%;
+  left: auto;
+  display: flex;
+  animation-delay: 2.2s;
+}
+
+/* Плавный переход hero → следующая секция */
+.hero--fullbleed::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0; right: 0;
+  height: 140px;
+  background: linear-gradient(0deg, var(--bg-deep) 0%, transparent 100%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav-row--solo {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav .container.nav-row--solo,
+.nav-row--solo {
+  max-width: 100%;
+  padding-left: 10%;
+  padding-right: 32px;
+}
+
+.nav-row--solo .nav-cta {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.nav-date {
+  margin-bottom: 0;
+  background: rgba(17,7,9,0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.hero-content .hero-date {
+  display: none;
+}
+
+/* ============================================================
+   HERO PHOTO seamless
+   ============================================================ */
+.hero-photo {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* ============================================================
+   PROMO — цена в левой колонке, фото чистое
+   ============================================================ */
+.promo-card {
+  grid-template-columns: 1.15fr 0.85fr;
+}
+
+.promo-price {
+  position: static !important;
+  z-index: auto !important;
+  text-align: left !important;
+  padding: 0 !important;
+  width: auto !important;
+  background: none !important;
+  margin-top: 28px;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.promo-price .old {
+  font-size: 20px !important;
+  display: inline !important;
+  margin-bottom: 0 !important;
+}
+.promo-price .arrow {
+  display: inline !important;
+  font-size: 18px !important;
+  margin-bottom: 0 !important;
+}
+.promo-price .new {
+  font-size: clamp(52px, 6.5vw, 86px) !important;
+  line-height: 0.9 !important;
+  filter: none !important;
+}
+.promo-price .save {
+  display: inline-flex !important;
+  margin-top: 0 !important;
+  align-self: flex-end;
+  margin-bottom: 6px;
+}
+
+.promo-price-wrap {
+  min-height: 480px;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.bday-photo-overlay {
+  background:
+    linear-gradient(90deg, rgba(8,5,10,0.65) 0%, rgba(8,5,10,0.12) 38%, transparent 65%),
+    linear-gradient(0deg, rgba(8,5,10,0.3) 0%, transparent 45%);
+}
+
+/* ============================================================
+   Canvas конфетти — убираем из потока
+   ============================================================ */
+.promo .container {
+  position: relative;
+}
+
+#bday-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================================
+   DEVICE MOCKUPS — ambient glow
+   ============================================================ */
+.soft-photo-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: -16px;
+  left: 10%; right: 10%;
+  height: 70px;
+  background: radial-gradient(
+    ellipse 65% 40% at 50% 100%,
+    rgba(80,110,200,0.15),
+    transparent 70%
+  );
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+@media (max-width: 980px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 120px;
+    padding-bottom: 60px;
   }
+  .hero-author--corner { display: none; }
+  .hero--fullbleed .hfb-trophy  { bottom: 46%; right: 3%; left: auto; }
+  .hero--fullbleed .hfb-jp      { bottom: 28%; left: 48%; right: auto; }
+  .hero--fullbleed .hfb-members { bottom: 12%; right: 3%; left: auto; }
+}
 
-  /* Показываем сразу всё что в viewport */
-  showVisible();
+@media (max-width: 520px) {
+  .hero--fullbleed .hero-float-badge { display: none; }
+}
 
-  if ('IntersectionObserver' in window){
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting){
-          e.target.classList.add('in');
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    revealEls.forEach(el => {
-      if (!el.classList.contains('in')) io.observe(el);
-    });
-  } else {
-    revealEls.forEach(el => el.classList.add('in'));
-  }
+/* ============================================================
+   GALLERY SLIDER
+   ============================================================ */
+.gallery-slider {
+  padding: 100px 0 60px;
+  position: relative;
+  overflow: hidden;
+}
+.gallery-slider .section-head {
+  margin-bottom: 48px;
+}
 
-  window.addEventListener('scroll', showVisible, { passive: true });
+.gs-viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 12px 0 16px;
+}
 
-  /* ---------- Reviews carousel ---------- */
-  const reviewsTrack = document.getElementById('reviewsTrack');
-  const carBtns = document.querySelectorAll('.car-btn');
-  if (reviewsTrack && carBtns.length){
-    carBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const dir = parseInt(btn.getAttribute('data-dir'), 10) || 1;
-        const item = reviewsTrack.querySelector('.review-item');
-        const step = item ? (item.getBoundingClientRect().width + 18) * 2 : 400;
-        reviewsTrack.scrollBy({ left: dir * step, behavior: 'smooth' });
-      });
-    });
-  }
+.gs-track {
+  display: flex;
+  gap: 20px;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  padding: 0 40px;
+}
 
-  /* ---------- Smooth scroll ---------- */
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', (e) => {
-      const href = a.getAttribute('href');
-      if (href.length <= 1) return;
-      const target = document.querySelector(href);
-      if (!target) return;
-      e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
+.gs-slide {
+  flex: 0 0 calc(33.333% - 54px);
+  aspect-ratio: 4 / 3;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--bg-elevated);
+  border: 1px solid var(--line-soft);
+  position: relative;
+  transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out), border-color 0.4s;
+}
+.gs-slide:hover {
+  transform: scale(1.025) translateY(-4px);
+  box-shadow: 0 24px 48px -12px rgba(0,0,0,0.7), 0 0 0 1px var(--line-strong);
+  border-color: var(--line);
+}
+.gs-slide img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s var(--ease-out);
+}
+.gs-slide:hover img {
+  transform: scale(1.05);
+}
 
-  /* ---------- Countdown ---------- */
-  function getDeadline(){
-    const now = new Date();
-    let year = now.getFullYear();
-    let dl = new Date(Date.UTC(year, 5, 3, 18, 59, 59));
-    if (dl.getTime() <= now.getTime()){
-      dl = new Date(Date.UTC(year + 1, 5, 3, 18, 59, 59));
-    }
-    return dl;
-  }
-  const cdEls = {
-    days:  document.querySelector('[data-cd="days"]'),
-    hours: document.querySelector('[data-cd="hours"]'),
-    mins:  document.querySelector('[data-cd="mins"]'),
-    secs:  document.querySelector('[data-cd="secs"]')
-  };
-  if (cdEls.days){
-    const deadline = getDeadline();
-    const pad = (n) => String(n).padStart(2, '0');
-    const tick = () => {
-      let diff = deadline.getTime() - Date.now();
-      if (diff < 0) diff = 0;
-      cdEls.days.textContent  = pad(Math.floor(diff / 86400000));
-      cdEls.hours.textContent = pad(Math.floor((diff / 3600000) % 24));
-      cdEls.mins.textContent  = pad(Math.floor((diff / 60000) % 60));
-      cdEls.secs.textContent  = pad(Math.floor((diff / 1000) % 60));
-    };
-    tick();
-    setInterval(tick, 1000);
-  }
+.gs-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--bronze), var(--bronze-deep));
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  z-index: 10;
+  box-shadow:
+    0 8px 24px -6px rgba(184,136,79,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), background 0.3s;
+}
+.gs-btn:hover {
+  background: linear-gradient(135deg, var(--bronze-glow), var(--bronze));
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 14px 32px -8px rgba(212,160,94,0.65);
+}
+.gs-btn:active { transform: translateY(-50%) scale(0.96); }
+.gs-btn--prev { left: 8px; }
+.gs-btn--next { right: 8px; }
 
-  /* ---------- Page loaded ---------- */
-  window.addEventListener('load', () => {
-    document.body.classList.add('loaded');
-    showVisible();
-  });
+.gs-fade {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 80px;
+  pointer-events: none;
+  z-index: 5;
+}
+.gs-fade--left {
+  left: 0;
+  background: linear-gradient(90deg, var(--bg-deep), transparent);
+}
+.gs-fade--right {
+  right: 0;
+  background: linear-gradient(270deg, var(--bg-deep), transparent);
+}
 
-  /* ---------- Gallery Slider — infinite loop ---------- */
-  (function(){
-    var gsTrack    = document.getElementById('gsTrack');
-    var gsBtnPrev  = document.getElementById('gsPrev');
-    var gsBtnNext  = document.getElementById('gsNext');
-    var gsDotsWrap = document.getElementById('gsDots');
+.gs-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 28px;
+}
+.gs-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--line-strong);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.3s, transform 0.3s, width 0.3s;
+}
+.gs-dot.active {
+  background: var(--gold);
+  width: 24px;
+  border-radius: 4px;
+  transform: none;
+}
 
-    if (!gsTrack || !gsBtnPrev || !gsBtnNext || !gsDotsWrap) return;
-
-    /* Собираем оригинальные слайды */
-    var origSlides = Array.from(gsTrack.querySelectorAll('.gs-slide'));
-    var total = origSlides.length;
-    if (total === 0) return;
-
-    var current = 0; /* логический индекс 0..total-1 */
-    var isAnimating = false;
-
-    /* ---------- Клонирование для бесшовного цикла ---------- */
-    /* Клонируем все слайды в конец и в начало */
-    origSlides.forEach(function(s){
-      var c = s.cloneNode(true);
-      c.classList.add('gs-clone');
-      gsTrack.appendChild(c);
-    });
-    origSlides.slice().reverse().forEach(function(s){
-      var c = s.cloneNode(true);
-      c.classList.add('gs-clone');
-      gsTrack.insertBefore(c, gsTrack.firstChild);
-    });
-
-    /* Все слайды после клонирования: [клоны конца] [оригиналы] [клоны начала] */
-    var allSlides = function(){ return gsTrack.querySelectorAll('.gs-slide'); };
-
-    /* ---------- Ширина слайда ---------- */
-    function slideW(){
-      var s = allSlides()[0];
-      if (!s) return 0;
-      return s.getBoundingClientRect().width + 20;
-    }
-
-    /* ---------- Позиция трека ---------- */
-    /* Реальный индекс в массиве allSlides = current + total (сдвиг на клоны) */
-    function realIdx(){
-      return current + total;
-    }
-
-    function moveTo(animate){
-      gsTrack.style.transition = animate
-        ? 'transform 0.55s cubic-bezier(0.22,1,0.36,1)'
-        : 'none';
-      gsTrack.style.transform = 'translateX(-' + (realIdx() * slideW()) + 'px)';
-    }
-
-    /* ---------- Dots ---------- */
-    function buildDots(){
-      gsDotsWrap.innerHTML = '';
-      for (var i = 0; i < total; i++){
-        (function(idx){
-          var d = document.createElement('button');
-          d.className = 'gs-dot' + (idx === 0 ? ' active' : '');
-          d.setAttribute('aria-label', 'Слайд ' + (idx + 1));
-          d.addEventListener('click', function(){
-            if (isAnimating) return;
-            current = idx;
-            moveTo(true);
-            updateDots();
-          });
-          gsDotsWrap.appendChild(d);
-        })(i);
-      }
-    }
-
-    function updateDots(){
-      var dots = gsDotsWrap.querySelectorAll('.gs-dot');
-      dots.forEach(function(d, i){
-        d.classList.toggle('active', i === current);
-      });
-    }
-
-    /* ---------- Переход ---------- */
-    function goTo(dir){
-      if (isAnimating) return;
-      isAnimating = true;
-      current += dir;
-      moveTo(true);
-      updateDots();
-    }
-
-    /* После анимации — бесшовный прыжок если вышли за пределы */
-    gsTrack.addEventListener('transitionend', function(){
-      isAnimating = false;
-      if (current < 0){
-        current = total - 1;
-        moveTo(false);
-        updateDots();
-      } else if (current >= total){
-        current = 0;
-        moveTo(false);
-        updateDots();
-      }
-    });
-
-    /* ---------- Инициализация ---------- */
-    buildDots();
-    /* Ставим без анимации на первый реальный слайд */
-    window.addEventListener('load', function(){
-      moveTo(false);
-    });
-    /* Запасной вариант если load уже сработал */
-    setTimeout(function(){ moveTo(false); }, 0);
-
-    /* ---------- Кнопки ---------- */
-    gsBtnPrev.addEventListener('click', function(){ goTo(-1); });
-    gsBtnNext.addEventListener('click', function(){ goTo(1); });
-
-    /* ---------- Auto-play ---------- */
-    var timer = setInterval(function(){ goTo(1); }, 4000);
-    gsTrack.parentElement.addEventListener('mouseenter', function(){ clearInterval(timer); });
-    gsTrack.parentElement.addEventListener('mouseleave', function(){
-      timer = setInterval(function(){ goTo(1); }, 4000);
-    });
-
-    /* ---------- Touch ---------- */
-    var startX = 0;
-    gsTrack.addEventListener('touchstart', function(e){
-      startX = e.touches[0].clientX;
-    }, { passive: true });
-    gsTrack.addEventListener('touchend', function(e){
-      var dx = e.changedTouches[0].clientX - startX;
-      if (Math.abs(dx) > 40) goTo(dx < 0 ? 1 : -1);
-    });
-
-    /* ---------- Resize ---------- */
-    var resizeTimer;
-    window.addEventListener('resize', function(){
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(function(){ moveTo(false); }, 150);
-    });
-
-  })();
-
-})();
+@media (max-width: 1024px) {
+  .gs-slide { flex: 0 0 calc(50% - 30px); }
+}
+@media (max-width: 700px) {
+  .gs-slide { flex: 0 0 calc(100% - 80px); }
+  .gallery-slider { padding: 60px 0 40px; }
+}
+```
