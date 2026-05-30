@@ -301,13 +301,45 @@
   /* Promo — main.css уже делает grid 1fr, добавляем только высоту */
   .promo-price-wrap { min-height: 320px; }
   .promo-price .new { font-size: clamp(44px, 10vw, 72px) !important; }
+
+  /* Promo фото — показываем человека по центру */
+  .bday-photo-frame img {
+    object-position: center 10%;
+  }
 }
 
 /* ============================================================
    АДАПТАЦИЯ — большой телефон (680px и ниже)
    ============================================================ */
 @media (max-width: 680px) {
-  /* Hero */
+  /* Hero — облегчаем оверлей слева чтобы было видно фото */
+  .hero-bg-overlay {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(8,5,10,0.75) 0%,
+        rgba(8,5,10,0.55) 18%,
+        rgba(8,5,10,0.25) 40%,
+        rgba(8,5,10,0.45) 75%,
+        rgba(8,5,10,0.95) 100%
+      );
+  }
+
+  /* Фото — центрируем на лицо */
+  .hero-bg img {
+    object-position: 50% 25%;
+  }
+
+  /* Текст — на всю ширину с тёмным фоном для читаемости */
+  .hero-content {
+    grid-template-columns: 1fr;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 85px;
+    padding-bottom: 48px;
+    align-items: flex-end;
+  }
+
   .hero--fullbleed .hero-text { max-width: 100%; }
   .hero-title { font-size: clamp(34px, 10vw, 52px) !important; }
   .hero-sub   { font-size: 16px; }
@@ -317,7 +349,7 @@
   .nav-row--solo { padding-left: 16px; padding-right: 16px; }
   .nav-cta { font-size: 11px; padding: 10px 16px; }
 
-  /* Бейджи — прячем, слишком тесно при таком hero */
+  /* Бейджи — прячем */
   .hero--fullbleed .hero-float-badge { display: none; }
 
   /* Секции */
@@ -328,8 +360,11 @@
   .price-card { padding: 26px 20px; }
   .price-cost .new { font-size: 36px !important; }
 
-  /* Promo */
-  .promo-price-wrap { min-height: 240px; }
+  /* Promo фото — лицо по центру сверху */
+  .bday-photo-frame img {
+    object-position: 40% 8%;
+  }
+  .promo-price-wrap { min-height: 280px; }
   .countdown { gap: 6px; }
   .cd-unit .n { font-size: 24px; }
   .promo-text { padding: 28px 20px 24px; }
@@ -378,8 +413,13 @@
   .promo { padding: 36px 0; }
   .promo-text { padding: 24px 16px 20px; }
   .promo h2 { font-size: clamp(26px, 8vw, 38px); }
-  .promo-price-wrap { min-height: 200px; }
+  .promo-price-wrap { min-height: 220px; }
   .promo-dates { gap: 8px; }
+
+  /* Promo фото на маленьком телефоне */
+  .bday-photo-frame img {
+    object-position: 40% 5%;
+  }
 
   /* Guarantee */
   .guarantee { padding: 56px 0; }
