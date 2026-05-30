@@ -38,22 +38,16 @@
   filter: contrast(1.04) saturate(1.06) brightness(0.92);
 }
 
-/* ============================================================
-   FIX 3 — Фото: голова значительно ниже от кнопки навигации
-   Увеличиваем вертикальное смещение с 35% до 55%
-   ============================================================ */
+/* FIX 3 — позиция фото */
 .hero-bg img {
   object-position: 60% 55%;
 }
 
-/* ============================================================
-   OVERLAY — многослойный, текстовая зона слева затемнена
-   ============================================================ */
+/* OVERLAY */
 .hero-bg-overlay {
   position: absolute;
   inset: 0;
   background:
-    /* Левая зона — плотное затемнение под текст */
     linear-gradient(
       100deg,
       rgba(8,5,10,0.93) 0%,
@@ -62,7 +56,6 @@
       rgba(8,5,10,0.10) 60%,
       transparent 72%
     ),
-    /* Снизу — seamless переход в фон */
     linear-gradient(
       0deg,
       rgba(8,5,10,1)    0%,
@@ -70,20 +63,17 @@
       rgba(8,5,10,0.22) 26%,
       transparent       44%
     ),
-    /* Сверху — под навигацию */
     linear-gradient(
       180deg,
       rgba(8,5,10,0.55) 0%,
       transparent 16%
     ),
-    /* Правая виньетка */
     linear-gradient(
       270deg,
       rgba(8,5,10,0.55) 0%,
       rgba(8,5,10,0.18) 14%,
       transparent 32%
     ),
-    /* Тёплый amber акцент слева */
     radial-gradient(
       ellipse 36% 50% at 0% 44%,
       rgba(150,70,15,0.18),
@@ -91,10 +81,7 @@
     );
 }
 
-/* ============================================================
-   FIX 1 — Текст к центру, не прижат к краю
-   Контейнер: отступ слева 8–12% от ширины экрана
-   ============================================================ */
+/* FIX 1 — Текст к центру */
 .hero-content {
   position: relative;
   z-index: 2;
@@ -111,31 +98,16 @@
   box-sizing: border-box;
 }
 
-/* Текстовый блок */
 .hero--fullbleed .hero-text {
   max-width: 520px;
   width: 100%;
 }
+.hero--fullbleed .hero-text .hero-date { margin-bottom: 24px; }
+.hero--fullbleed .hero-title           { margin-bottom: 20px; }
+.hero--fullbleed .hero-sub             { margin-bottom: 28px; }
+.hero--fullbleed .bullets              { margin-bottom: 36px; }
 
-.hero--fullbleed .hero-text .hero-date {
-  margin-bottom: 24px;
-}
-
-.hero--fullbleed .hero-title {
-  margin-bottom: 20px;
-}
-
-.hero--fullbleed .hero-sub {
-  margin-bottom: 28px;
-}
-
-.hero--fullbleed .bullets {
-  margin-bottom: 36px;
-}
-
-/* ============================================================
-   АВТОР — правый нижний угол
-   ============================================================ */
+/* АВТОР — правый нижний угол */
 .hero-author--corner {
   text-align: right;
   align-self: flex-end;
@@ -151,11 +123,8 @@
   letter-spacing: -0.01em;
   margin-bottom: 12px;
 }
-.hero-author--corner ul {
-  list-style: none;
-  padding: 0; margin: 0;
-}
-.hero-author--corner li {
+.hero-author--corner ul  { list-style: none; padding: 0; margin: 0; }
+.hero-author--corner li  {
   position: relative;
   padding-right: 14px;
   font-size: 12px;
@@ -174,37 +143,34 @@
 }
 
 /* ============================================================
-   FIX 2 — Бейджи
+   FIX 2 — Бейджи: аккуратная вертикальная колонка справа
    ============================================================ */
 .hero--fullbleed .hero-float-badge {
   position: absolute;
   z-index: 5;
-  min-width: 155px;
+  min-width: 175px;
+  right: 3%;
+  left: auto !important;
 }
 
+/* ТОП-3 трейдер — верхний */
 .hero--fullbleed .hfb-trophy {
-  top: auto;
-  bottom: 52%;
-  right: 3%;
-  left: auto;
+  top: 22%;
+  bottom: auto;
   animation-delay: 0s;
 }
 
+/* JP Morgan — средний */
 .hero--fullbleed .hfb-jp {
-  display: flex;
-  top: auto;
-  bottom: 36%;
-  right: auto;
-  left: 60%;
+  top: 46%;
+  bottom: auto;
   animation-delay: 1.2s;
 }
 
+/* 250+ участников — нижний */
 .hero--fullbleed .hfb-members {
-  top: auto;
-  bottom: 24%;
-  right: 3%;
-  left: auto;
-  display: flex;
+  top: 68%;
+  bottom: auto;
   animation-delay: 2.2s;
 }
 
@@ -220,51 +186,35 @@
   pointer-events: none;
 }
 
-/* ============================================================
-   NAV
-   ============================================================ */
+/* NAV */
 .nav-row--solo {
   justify-content: space-between;
   align-items: center;
 }
-
 .nav .container.nav-row--solo,
 .nav-row--solo {
   max-width: 100%;
   padding-left: 10%;
   padding-right: 32px;
 }
-
-.nav-row--solo .nav-cta {
-  margin-left: auto;
-  flex-shrink: 0;
-}
+.nav-row--solo .nav-cta { margin-left: auto; flex-shrink: 0; }
 .nav-date {
   margin-bottom: 0;
   background: rgba(17,7,9,0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
-.hero-content .hero-date {
-  display: none;
-}
+.hero-content .hero-date { display: none; }
 
-/* ============================================================
-   HERO PHOTO seamless
-   ============================================================ */
+/* HERO PHOTO seamless */
 .hero-photo {
   border-radius: 0 !important;
   box-shadow: none !important;
   border: none !important;
 }
 
-/* ============================================================
-   PROMO — цена в левой колонке, фото чистое
-   ============================================================ */
-.promo-card {
-  grid-template-columns: 1.15fr 0.85fr;
-}
-
+/* PROMO — цена в левой колонке */
+.promo-card { grid-template-columns: 1.15fr 0.85fr; }
 .promo-price {
   position: static !important;
   z-index: auto !important;
@@ -278,71 +228,35 @@
   gap: 16px;
   flex-wrap: wrap;
 }
-.promo-price .old {
-  font-size: 20px !important;
-  display: inline !important;
-  margin-bottom: 0 !important;
-}
-.promo-price .arrow {
-  display: inline !important;
-  font-size: 18px !important;
-  margin-bottom: 0 !important;
-}
-.promo-price .new {
-  font-size: clamp(52px, 6.5vw, 86px) !important;
-  line-height: 0.9 !important;
-  filter: none !important;
-}
-.promo-price .save {
-  display: inline-flex !important;
-  margin-top: 0 !important;
-  align-self: flex-end;
-  margin-bottom: 6px;
-}
-
-.promo-price-wrap {
-  min-height: 480px;
-  display: block;
-  position: relative;
-  overflow: hidden;
-}
-
+.promo-price .old  { font-size: 20px !important; display: inline !important; margin-bottom: 0 !important; }
+.promo-price .arrow{ display: inline !important; font-size: 18px !important; margin-bottom: 0 !important; }
+.promo-price .new  { font-size: clamp(52px, 6.5vw, 86px) !important; line-height: 0.9 !important; filter: none !important; }
+.promo-price .save { display: inline-flex !important; margin-top: 0 !important; align-self: flex-end; margin-bottom: 6px; }
+.promo-price-wrap  { min-height: 480px; display: block; position: relative; overflow: hidden; }
 .bday-photo-overlay {
   background:
     linear-gradient(90deg, rgba(8,5,10,0.65) 0%, rgba(8,5,10,0.12) 38%, transparent 65%),
     linear-gradient(0deg, rgba(8,5,10,0.3) 0%, transparent 45%);
 }
 
-/* ============================================================
-   Canvas конфетти — убираем из потока
-   ============================================================ */
-.promo .container {
-  position: relative;
-}
-
+/* Canvas конфетти */
+.promo .container { position: relative; }
 #bday-canvas {
   position: absolute;
   top: 0; left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   pointer-events: none;
   z-index: 1;
 }
 
-/* ============================================================
-   DEVICE MOCKUPS — ambient glow
-   ============================================================ */
+/* Device mockups — ambient glow */
 .soft-photo-wrap::after {
   content: '';
   position: absolute;
   bottom: -16px;
   left: 10%; right: 10%;
   height: 70px;
-  background: radial-gradient(
-    ellipse 65% 40% at 50% 100%,
-    rgba(80,110,200,0.15),
-    transparent 70%
-  );
+  background: radial-gradient(ellipse 65% 40% at 50% 100%, rgba(80,110,200,0.15), transparent 70%);
   filter: blur(18px);
   pointer-events: none;
   z-index: -1;
@@ -360,9 +274,11 @@
     padding-bottom: 60px;
   }
   .hero-author--corner { display: none; }
-  .hero--fullbleed .hfb-trophy  { bottom: 46%; right: 3%; left: auto; }
-  .hero--fullbleed .hfb-jp      { bottom: 28%; left: 48%; right: auto; }
-  .hero--fullbleed .hfb-members { bottom: 12%; right: 3%; left: auto; }
+
+  /* На планшете — бейджи прижаты к правому краю, распределены */
+  .hero--fullbleed .hfb-trophy  { top: 18%; right: 2%; }
+  .hero--fullbleed .hfb-jp      { top: 44%; right: 2%; }
+  .hero--fullbleed .hfb-members { top: 68%; right: 2%; }
 }
 
 @media (max-width: 520px) {
@@ -372,30 +288,15 @@
 /* ============================================================
    GALLERY SLIDER
    ============================================================ */
-.gallery-slider {
-  padding: 100px 0 60px;
-  position: relative;
-  overflow: hidden;
-}
-.gallery-slider .section-head {
-  margin-bottom: 48px;
-}
-
-.gs-viewport {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  padding: 12px 0 16px;
-}
-
+.gallery-slider { padding: 100px 0 60px; position: relative; overflow: hidden; }
+.gallery-slider .section-head { margin-bottom: 48px; }
+.gs-viewport { position: relative; width: 100%; overflow: hidden; padding: 12px 0 16px; }
 .gs-track {
-  display: flex;
-  gap: 20px;
+  display: flex; gap: 20px;
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
   padding: 0 40px;
 }
-
 .gs-slide {
   flex: 0 0 calc(33.333% - 54px);
   aspect-ratio: 4 / 3;
@@ -411,32 +312,15 @@
   box-shadow: 0 24px 48px -12px rgba(0,0,0,0.7), 0 0 0 1px var(--line-strong);
   border-color: var(--line);
 }
-.gs-slide img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.6s var(--ease-out);
-}
-.gs-slide:hover img {
-  transform: scale(1.05);
-}
-
+.gs-slide img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s var(--ease-out); }
+.gs-slide:hover img { transform: scale(1.05); }
 .gs-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 52px; height: 52px;
-  border-radius: 50%;
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 52px; height: 52px; border-radius: 50%;
   background: linear-gradient(135deg, var(--bronze), var(--bronze-deep));
-  border: none;
-  color: var(--text);
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  z-index: 10;
-  box-shadow:
-    0 8px 24px -6px rgba(184,136,79,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.15);
+  border: none; color: var(--text); cursor: pointer;
+  display: grid; place-items: center; z-index: 10;
+  box-shadow: 0 8px 24px -6px rgba(184,136,79,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
   transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), background 0.3s;
 }
 .gs-btn:hover {
@@ -447,49 +331,19 @@
 .gs-btn:active { transform: translateY(-50%) scale(0.96); }
 .gs-btn--prev { left: 8px; }
 .gs-btn--next { right: 8px; }
-
-.gs-fade {
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 80px;
-  pointer-events: none;
-  z-index: 5;
-}
-.gs-fade--left {
-  left: 0;
-  background: linear-gradient(90deg, var(--bg-deep), transparent);
-}
-.gs-fade--right {
-  right: 0;
-  background: linear-gradient(270deg, var(--bg-deep), transparent);
-}
-
-.gs-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 28px;
-}
+.gs-fade { position: absolute; top: 0; bottom: 0; width: 80px; pointer-events: none; z-index: 5; }
+.gs-fade--left  { left: 0;  background: linear-gradient(90deg, var(--bg-deep), transparent); }
+.gs-fade--right { right: 0; background: linear-gradient(270deg, var(--bg-deep), transparent); }
+.gs-dots { display: flex; justify-content: center; gap: 8px; margin-top: 28px; }
 .gs-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--line-strong);
-  border: none;
-  cursor: pointer;
-  padding: 0;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--line-strong); border: none; cursor: pointer; padding: 0;
   transition: background 0.3s, transform 0.3s, width 0.3s;
 }
-.gs-dot.active {
-  background: var(--gold);
-  width: 24px;
-  border-radius: 4px;
-  transform: none;
-}
+.gs-dot.active { background: var(--gold); width: 24px; border-radius: 4px; transform: none; }
 
-@media (max-width: 1024px) {
-  .gs-slide { flex: 0 0 calc(50% - 30px); }
-}
-@media (max-width: 700px) {
+@media (max-width: 1024px) { .gs-slide { flex: 0 0 calc(50% - 30px); } }
+@media (max-width: 700px)  {
   .gs-slide { flex: 0 0 calc(100% - 80px); }
   .gallery-slider { padding: 60px 0 40px; }
 }
