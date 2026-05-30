@@ -32,8 +32,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 55%;
+  object-position: 45% 55% !important;
   filter: contrast(1.04) saturate(1.06) brightness(0.92);
+}
+.hero-bg .hero-bg-desktop {
+  object-position: 45% 55% !important;
 }
 
 /* Мобильное фото — скрыто по умолчанию */
@@ -44,8 +47,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 20%;
+  object-position: 50% 20% !important;
   filter: contrast(1.04) saturate(1.06) brightness(0.92);
+}
+.hero-bg .hero-bg-mobile {
+  object-position: 50% 20% !important;
 }
 
 /* OVERLAY */
@@ -440,3 +446,4 @@
   .gs-slide { flex: 0 0 calc(100% - 80px); }
   .gallery-slider { padding: 60px 0 40px; }
 }
+/* v3 */
