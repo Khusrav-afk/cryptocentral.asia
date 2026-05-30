@@ -143,34 +143,37 @@
 }
 
 /* ============================================================
-   FIX 2 — Бейджи: аккуратная вертикальная колонка справа
+   FIX 2 — Бейджи: колонка справа, центрирована по высоте фото
    ============================================================ */
+
+/* Все три бейджа — правый край, равные отступы от центра */
 .hero--fullbleed .hero-float-badge {
   position: absolute;
   z-index: 5;
   min-width: 175px;
   right: 3%;
   left: auto !important;
+
+  /* Сброс анимации — переопределим ниже */
+  top: auto;
+  bottom: auto;
 }
 
-/* ТОП-3 трейдер — верхний */
+/* Центр колонки = 50% высоты экрана.
+   Три бейджа по ~56px + 12px gap = ~180px суммарно.
+   Сдвигаем первый на -90px от центра, остальные через top */
 .hero--fullbleed .hfb-trophy {
-  top: 22%;
-  bottom: auto;
+  top: calc(50% - 90px);
   animation-delay: 0s;
 }
 
-/* JP Morgan — средний */
 .hero--fullbleed .hfb-jp {
-  top: 46%;
-  bottom: auto;
+  top: calc(50% - 90px + 68px);  /* + высота бейджа + gap */
   animation-delay: 1.2s;
 }
 
-/* 250+ участников — нижний */
 .hero--fullbleed .hfb-members {
-  top: 68%;
-  bottom: auto;
+  top: calc(50% - 90px + 136px); /* + 2 × (высота + gap) */
   animation-delay: 2.2s;
 }
 
@@ -275,10 +278,10 @@
   }
   .hero-author--corner { display: none; }
 
-  /* На планшете — бейджи прижаты к правому краю, распределены */
-  .hero--fullbleed .hfb-trophy  { top: 18%; right: 2%; }
-  .hero--fullbleed .hfb-jp      { top: 44%; right: 2%; }
-  .hero--fullbleed .hfb-members { top: 68%; right: 2%; }
+  /* На планшете — та же логика центрированной колонки */
+  .hero--fullbleed .hfb-trophy  { top: calc(50% - 90px);        right: 2%; }
+  .hero--fullbleed .hfb-jp      { top: calc(50% - 90px + 68px); right: 2%; }
+  .hero--fullbleed .hfb-members { top: calc(50% - 90px + 136px);right: 2%; }
 }
 
 @media (max-width: 520px) {
