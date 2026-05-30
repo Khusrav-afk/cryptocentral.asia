@@ -249,12 +249,20 @@
       );
   }
 
-  .hero--fullbleed { align-items: flex-end; }
+  .hero--fullbleed {
+    align-items: flex-end;
+    overflow: visible;
+  }
+  /* Убираем псевдоэлемент-градиент который перекрывает текст снизу */
+  .hero--fullbleed::after {
+    display: none;
+  }
   .hero-content {
     grid-template-columns: 1fr;
     padding-left: 20px; padding-right: 20px;
     padding-top: 0; padding-bottom: 52px;
     gap: 0;
+    z-index: 10;
   }
 
   .hero--fullbleed .hero-text { max-width: 100%; }
@@ -266,6 +274,8 @@
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;
+    position: relative !important;
+    z-index: 10 !important;
     color: rgba(168, 151, 142, 0.9);
     font-size: 13px;
     line-height: 1.5;
