@@ -281,7 +281,7 @@
   }
   .promo-price-wrap {
     order: 1;
-    min-height: 320px;
+    min-height: 520px;
     width: 100%;
   }
   .promo-text {
@@ -298,7 +298,7 @@
     object-fit: cover;
   }
   .bday-photo-frame img {
-    object-position: 50% 15%;
+    object-position: 50% 30%;
   }
   /* Оверлей снизу для плавного перехода */
   .bday-photo-overlay {
