@@ -286,8 +286,8 @@
   .promo-price-wrap {
     order: 1 !important;
     width: 100% !important;
-    height: 100vw !important;
-    max-height: 480px !important;
+    height: 130vw !important;
+    max-height: 640px !important;
     min-height: unset !important;
     position: relative !important;
     overflow: hidden !important;
@@ -313,7 +313,7 @@
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
-    object-position: 50% 20% !important;
+    object-position: 50% 50% !important;
   }
   .bday-photo-overlay {
     background: linear-gradient(180deg, transparent 55%, rgba(8,5,10,0.9) 88%, rgba(8,5,10,1) 100%) !important;
@@ -342,7 +342,7 @@
   .promo-text { padding: 24px 16px 20px; }
   .promo h2 { font-size: clamp(26px, 8vw, 38px); }
   .promo-dates { gap: 8px; }
-  .bday-photo-frame img { object-position: 40% 5%; }
+  .bday-photo-frame img { object-position: 50% 50% !important; }
   .guarantee { padding: 56px 0; }
   .start-ig { font-size: 14px; padding: 14px 20px; }
   .start-photo { max-width: 100%; }
