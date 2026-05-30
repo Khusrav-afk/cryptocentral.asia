@@ -269,42 +269,55 @@
   .price-cost .new { font-size: 36px !important; }
 
   .bday-photo-frame img { object-position: 40% 8%; }
-  .promo-price-wrap { min-height: 260px; }
   .countdown { gap: 6px; }
   .cd-unit .n { font-size: 24px; }
   .promo-text { padding: 28px 20px 24px; }
 
   /* Promo — фото сверху, текст снизу */
   .promo-card {
-    grid-template-columns: 1fr;
-    min-height: auto;
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
   .promo-price-wrap {
-    order: 1;
-    min-height: 75vw !important;
-    width: 100%;
+    order: 1 !important;
+    position: relative !important;
+    height: 100vw !important;
+    min-height: unset !important;
+    max-height: 500px !important;
+    width: 100% !important;
+    flex-shrink: 0 !important;
   }
   .promo-text {
-    order: 2;
+    order: 2 !important;
+    position: relative !important;
+    z-index: 2 !important;
   }
-  /* Фото занимает весь блок */
-  .bday-photo,
-  .bday-photo-frame,
+  .bday-photo {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .bday-photo-frame {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+  }
   .bday-photo-frame img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: 50% 20% !important;
   }
-  .bday-photo-frame img {
-    object-position: 50% 30%;
-  }
-  /* Оверлей снизу для плавного перехода */
   .bday-photo-overlay {
     background:
-      linear-gradient(180deg, transparent 40%, rgba(8,5,10,0.95) 90%, rgba(8,5,10,1) 100%),
-      linear-gradient(90deg, rgba(8,5,10,0.1) 0%, transparent 40%);
+      linear-gradient(180deg, transparent 50%, rgba(8,5,10,0.95) 90%, rgba(8,5,10,1) 100%) !important;
   }
 }
 
