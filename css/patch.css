@@ -50,7 +50,7 @@
 }
 .hero-bg-desktop { display: block; }
 
-/* FIX 3 — позиция фото */
+/* FIX 3 — позиция фото десктоп */
 .hero-bg img {
   object-position: 60% 55%;
 }
