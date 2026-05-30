@@ -261,12 +261,21 @@
   .hero-title { font-size: clamp(32px, 9vw, 48px) !important; }
   .hero-sub   { font-size: 15px; max-width: 100%; }
   .bullets li { font-size: 14px; }
-  .hero-cta-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .hero-cta-row { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .hero-cta-row .meta {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    color: rgba(168, 151, 142, 0.9);
+    font-size: 13px;
+    line-height: 1.5;
+    padding-bottom: 4px;
+  }
   .btn-primary  { width: 100%; justify-content: center; }
 
   .hero--fullbleed .hero-float-badge { display: none; }
   .nav-row--solo { padding-left: 16px; padding-right: 16px; }
-  .nav-cta { font-size: 11px; padding: 10px 16px; }
+  .nav-cta { display: none; }
 
   .section-title { font-size: clamp(26px, 7vw, 40px) !important; }
   .section-sub   { font-size: 15px; }
