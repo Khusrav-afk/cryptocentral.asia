@@ -281,7 +281,7 @@
   }
   .promo-price-wrap {
     order: 1;
-    min-height: 520px;
+    min-height: 75vw !important;
     width: 100%;
   }
   .promo-text {
@@ -329,7 +329,6 @@
   .promo { padding: 36px 0; }
   .promo-text { padding: 24px 16px 20px; }
   .promo h2 { font-size: clamp(26px, 8vw, 38px); }
-  .promo-price-wrap { min-height: 220px; }
   .promo-dates { gap: 8px; }
   .bday-photo-frame img { object-position: 40% 5%; }
   .guarantee { padding: 56px 0; }
